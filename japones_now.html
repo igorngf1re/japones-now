@@ -96,6 +96,23 @@ body.no-furi ruby rt{opacity:0;visibility:hidden}
 .grade-btn{border:none;border-radius:14px;padding:14px 4px;font-size:14px;font-weight:700;color:#fff;cursor:pointer}
 .grade-btn small{display:block;font-size:10px;font-weight:500;opacity:.8;margin-top:2px}
 .g-fail{background:var(--danger)} .g-hard{background:var(--hard)} .g-good{background:var(--good)} .g-easy{background:var(--easy)}
+/* missão + dica */
+.mission{background:var(--card);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px}
+.mission h3{font-size:14px;margin-bottom:8px}
+.mission h3 span{color:var(--amber)}
+.m-item{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);padding:5px 0}
+.m-item.done{color:var(--accent2)}
+.m-item .mk{width:22px;height:22px;border-radius:50%;border:2px solid #3a4055;display:inline-flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.m-item.done .mk{background:var(--accent2);border-color:var(--accent2);color:#0f1117;font-weight:800}
+.tip-card{background:var(--card);border-radius:var(--radius);padding:14px 16px;margin-top:14px;font-size:13px;color:var(--muted);line-height:1.6}
+.tip-card b{color:var(--text)}
+/* diálogos */
+.dlg-line{background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;border-left:4px solid var(--blue)}
+.dlg-line.spB{border-left-color:var(--accent)}
+.dlg-line .dl-sp{font-size:11px;font-weight:700;color:var(--muted)}
+.dlg-line .dl-jp{font-size:19px;line-height:2;margin-top:2px}
+.dlg-line .dl-pt{font-size:12px;color:var(--muted);margin-top:4px}
+.dlg-line.playing{background:var(--card2)}
 /* praticar */
 .opt-btn{
   display:block;width:100%;background:var(--card2);border:2px solid #2c3245;color:var(--text);
@@ -259,6 +276,20 @@ const DECKS = [
 {j:"終[お]わりました",pt:"terminei / acabou",ex:"この作業[さぎょう]は終[お]わりました。次[つぎ]は何[なに]ですか。",exPt:"Terminei este trabalho. Qual é o próximo?"},
 {j:"大丈夫[だいじょうぶ]です",pt:"está tudo bem / sem problema",ex:"大丈夫[だいじょうぶ]です。一人[ひとり]でできます。",exPt:"Tudo bem. Consigo sozinho."},
 {j:"何時[なんじ]までですか",pt:"até que horas?",ex:"今日[きょう]の作業[さぎょう]は何時[なんじ]までですか。",exPt:"O trabalho de hoje vai até que horas?"},
+{j:"漏電[ろうでん]",pt:"fuga de corrente",ex:"漏電[ろうでん]の可能性[かのうせい]があります。",exPt:"Há possibilidade de fuga de corrente."},
+{j:"点検[てんけん]",pt:"inspeção / verificação",ex:"ここを点検[てんけん]してください。",exPt:"Inspecione aqui, por favor."},
+{j:"施工[せこう]",pt:"execução da obra",ex:"施工[せこう]は来週[らいしゅう]から始[はじ]まります。",exPt:"A execução começa semana que vem."},
+{j:"修理[しゅうり]",pt:"conserto / reparo",ex:"このコンセントを修理[しゅうり]します。",exPt:"Vou consertar esta tomada."},
+{j:"ヒューズ",pt:"fusível",ex:"ヒューズが切[き]れました。",exPt:"O fusível queimou."},
+{j:"抵抗[ていこう]",pt:"resistência (elétrica)",ex:"抵抗[ていこう]を測[はか]ります。",exPt:"Vou medir a resistência."},
+{j:"回路[かいろ]",pt:"circuito",ex:"この回路[かいろ]を確認[かくにん]してください。",exPt:"Verifique este circuito, por favor."},
+{j:"作業服[さぎょうふく]",pt:"uniforme de trabalho",ex:"作業服[さぎょうふく]を着[き]てください。",exPt:"Vista o uniforme de trabalho."},
+{j:"高圧[こうあつ]",pt:"alta tensão",ex:"高圧[こうあつ]注意[ちゅうい]の看板[かんばん]があります。",exPt:"Há uma placa de cuidado: alta tensão."},
+{j:"危険[きけん]です",pt:"é perigoso",ex:"ここは危険[きけん]です。入[はい]らないでください。",exPt:"Aqui é perigoso. Não entre."},
+{j:"もう一度[いちど]説明[せつめい]してください",pt:"explique mais uma vez, por favor",ex:"すみません、もう一度[いちど]説明[せつめい]してください。",exPt:"Desculpe, explique mais uma vez, por favor."},
+{j:"感電注意[かんでんちゅうい]",pt:"placa: cuidado, risco de choque",ex:"感電注意[かんでんちゅうい]。触[さわ]るな。",exPt:"Cuidado: choque elétrico. Não toque."},
+{j:"頭上注意[ずじょうちゅうい]",pt:"placa: cuidado com a cabeça",ex:"頭上注意[ずじょうちゅうい]の看板[かんばん]を見[み]てください。",exPt:"Veja a placa de cuidado com a cabeça."},
+{j:"足元注意[あしもとちゅうい]",pt:"placa: cuidado onde pisa",ex:"雨[あめ]の日[ひ]は足元注意[あしもとちゅうい]。",exPt:"Em dia de chuva, cuidado onde pisa."},
 ] },
   { id:"daily", name:"日常生活・Dia a dia", sub:"Trem, konbini, apartamento, saúde", cards:[
 {j:"駅[えき]",pt:"estação (de trem)",ex:"駅[えき]まで歩[ある]いて十分[じゅっぷん]です。",exPt:"São 10 minutos a pé até a estação."},
@@ -321,6 +352,11 @@ const DECKS = [
 {j:"何時[なんじ]ですか",pt:"que horas são?",ex:"すみません、今[いま]何時[なんじ]ですか。",exPt:"Com licença, que horas são?"},
 {j:"ちょっと待[ま]ってください",pt:"espere um pouco, por favor",ex:"ちょっと待[ま]ってください。すぐ行[い]きます。",exPt:"Espera um pouco. Já vou."},
 {j:"また明日[あした]",pt:"até amanhã",ex:"お疲[つか]れ様[さま]でした。また明日[あした]。",exPt:"Bom trabalho hoje. Até amanhã."},
+{j:"助[たす]けてください",pt:"me ajude! (emergência)",ex:"すみません！助[たす]けてください！",exPt:"Por favor! Me ajudem!"},
+{j:"救急車[きゅうきゅうしゃ]を呼[よ]んでください",pt:"chame uma ambulância",ex:"けが人[にん]がいます。救急車[きゅうきゅうしゃ]を呼[よ]んでください。",exPt:"Tem um ferido. Chame uma ambulância."},
+{j:"火事[かじ]",pt:"incêndio",ex:"火事[かじ]です！逃[に]げてください！",exPt:"Incêndio! Fujam!"},
+{j:"地震[じしん]",pt:"terremoto",ex:"地震[じしん]の時[とき]は机[つくえ]の下[した]に入[はい]ってください。",exPt:"Em terremoto, entre embaixo da mesa."},
+{j:"けがをしました",pt:"me machuquei",ex:"すみません、手[て]にけがをしました。",exPt:"Desculpe, machuquei a mão."},
 ] },
   { id:"gram",  name:"文法・Gramática", sub:"Padrões N5–N4 em frases reais", cards:[
 {j:"〜てください",pt:"faça ~, por favor (pedido)",ex:"ここに名前[なまえ]を書[か]いてください。",exPt:"Escreva seu nome aqui, por favor."},
@@ -366,19 +402,78 @@ const DECKS = [
 ] },
 ];
 
+// ---------- DIÁLOGOS (situações reais) ----------
+const DIALOGUES = [
+{t:"朝礼[ちょうれい] — Reunião matinal",pt:"Começando o dia no canteiro",lines:[
+ {s:"A",j:"おはようございます。今日[きょう]もよろしくお願[ねが]いします。",pt:"Bom dia. Conto com vocês hoje também."},
+ {s:"B",j:"おはよう。今日[きょう]は二階[にかい]の配線[はいせん]作業[さぎょう]です。",pt:"Bom dia. Hoje é o trabalho de fiação do 2º andar."},
+ {s:"A",j:"はい、わかりました。",pt:"Sim, entendido."},
+ {s:"B",j:"安全[あんぜん]第一[だいいち]で。気[き]をつけて。",pt:"Segurança em primeiro lugar. Cuidado."},
+ {s:"A",j:"はい、頑張[がんば]ります。",pt:"Sim, vou dar meu melhor."}]},
+{t:"道具[どうぐ]を借[か]りる — Pedir ferramenta",pt:"Pedindo emprestado no trabalho",lines:[
+ {s:"A",j:"すみません、ペンチを貸[か]してもらえますか。",pt:"Com licença, pode me emprestar o alicate?"},
+ {s:"B",j:"いいよ。どうぞ。",pt:"Claro. Aqui está."},
+ {s:"A",j:"ありがとうございます。すぐ返[かえ]します。",pt:"Obrigado. Devolvo já."},
+ {s:"B",j:"終[お]わったら、そこに置[お]いといて。",pt:"Quando terminar, deixa aí."},
+ {s:"A",j:"はい、わかりました。",pt:"Tá, entendi."}]},
+{t:"報告[ほうこく] — Reportar um problema",pt:"報連相: reportar, comunicar, consultar",lines:[
+ {s:"A",j:"すみません、ちょっといいですか。",pt:"Com licença, tem um minuto?"},
+ {s:"B",j:"どうした？",pt:"O que foi?"},
+ {s:"A",j:"このブレーカーが古[ふる]いです。交換[こうかん]した方[ほう]がいいと思[おも]います。",pt:"Este disjuntor está velho. Acho melhor trocar."},
+ {s:"B",j:"そうか。じゃあ、新[あたら]しいのに交換[こうかん]して。",pt:"Entendi. Então troca por um novo."},
+ {s:"A",j:"はい。電源[でんげん]を切[き]ってから作業[さぎょう]します。",pt:"Sim. Trabalho só depois de desligar a energia."}]},
+{t:"駅[えき]で — Na estação",pt:"Perguntando sobre o trem",lines:[
+ {s:"A",j:"すみません、この電車[でんしゃ]は渋谷[しぶや]に止[と]まりますか。",pt:"Com licença, este trem para em Shibuya?"},
+ {s:"B",j:"いいえ、急行[きゅうこう]は止[と]まりません。次[つぎ]の各駅停車[かくえきていしゃ]に乗[の]ってください。",pt:"Não, o expresso não para. Pegue o próximo parador."},
+ {s:"A",j:"何番線[なんばんせん]ですか。",pt:"Qual plataforma?"},
+ {s:"B",j:"二番線[にばんせん]です。",pt:"Plataforma 2."},
+ {s:"A",j:"ありがとうございました。",pt:"Muito obrigado."}]},
+{t:"コンビニで — No konbini",pt:"Comprando o almoço",lines:[
+ {s:"A",j:"お弁当[べんとう]、温[あたた]めますか。",pt:"Quer que esquente a marmita?"},
+ {s:"B",j:"はい、お願[ねが]いします。",pt:"Sim, por favor."},
+ {s:"A",j:"お箸[はし]はいりますか。",pt:"Precisa de hashi?"},
+ {s:"B",j:"はい。あと、袋[ふくろ]もください。",pt:"Sim. E uma sacola também, por favor."},
+ {s:"A",j:"ありがとうございました。",pt:"Obrigado pela preferência."}]},
+{t:"緊急[きんきゅう] — Emergência",pt:"Acidente no trabalho",lines:[
+ {s:"A",j:"大丈夫[だいじょうぶ]ですか！",pt:"Você está bem?!"},
+ {s:"B",j:"手[て]をけがしました。",pt:"Machuquei a mão."},
+ {s:"A",j:"動[うご]かないでください。今[いま]、人[ひと]を呼[よ]びます。",pt:"Não se mexa. Vou chamar alguém."},
+ {s:"A",j:"すみません！けが人[にん]がいます！救急箱[きゅうきゅうばこ]をお願[ねが]いします！",pt:"Atenção! Tem um ferido! Tragam o kit de primeiros socorros!"}]},
+];
+
+// ---------- DICAS (cultura de trabalho + método) ----------
+const TIPS = [
+"<b>報連相 (hō-ren-sō)</b>: a regra de ouro do trabalho japonês — 報告 reportar, 連絡 comunicar, 相談 consultar. Avise sempre seu 親方 sobre progresso e problemas, mesmo pequenos.",
+"<b>和 (wa)</b>: a harmonia do grupo vem antes do indivíduo. Evite dizer 「いいえ」 diretamente; prefira 「ちょっと難しいです」 (é um pouco difícil).",
+"<b>Hierarquia</b>: trate 先輩 (veteranos) e 親方 com linguagem educada (です/ます). Com colegas próximos, o casual vem com o tempo.",
+"<b>朝礼</b>: chegue 10-15 min antes. Pontualidade no Japão significa estar pronto ANTES do horário.",
+"<b>5S</b>: 整理・整頓・清掃・清潔・躾 — organização e limpeza contínuas do posto de trabalho. Deixar ferramentas espalhadas pega muito mal.",
+"<b>Comunicação indireta</b>: 「考えておきます」 (vou pensar) geralmente significa não. Aprenda a ler o contexto (空気を読む).",
+"<b>Método</b>: 10 minutos TODO dia vale mais que 2 horas no domingo. A constância vence a intensidade.",
+"<b>Shadowing</b>: repita em voz alta imitando ritmo e entonação. Funciona até sussurrando no trem.",
+"<b>Erros são ouro</b>: refazer o que você errou é o estudo mais eficiente que existe. Use o modo Meus Erros!",
+"<b>NHK Easy News</b> (news.web.nhk): notícias curtas com furigana, perfeitas para ler no trem.",
+"<b>指差し確認</b>: apontar e falar em voz alta ao verificar (「電源オフ、よし！」) reduz erros em 85%. Use no trabalho E no estudo.",
+"<b>お先に失礼します</b>: sempre diga ao sair antes dos outros. Sair calado é considerado rude.",
+"<b>Imersão barata</b>: mude o idioma do celular para japonês e ouça rádio/podcast japonês no trajeto.",
+"<b>いただきます・ごちそうさま</b>: diga antes e depois de comer com colegas — pequenos rituais criam pertencimento.",
+];
+
 // ---------- ESTADO ----------
 const LS_KEY = "nihongoNow_v1";
 let state = load();
 function load(){
   try{
     const s = JSON.parse(localStorage.getItem(LS_KEY));
-    if(s && s.cards) return s;
+    if(s && s.cards){ if(!s.errors) s.errors = {}; return s; }
   }catch(e){}
-  return { cards:{}, settings:{ newPerDay:10, furi:true, autoAudio:true, ptVoice:true }, days:{}, streak:{last:null,count:0} };
+  return { cards:{}, settings:{ newPerDay:10, furi:true, autoAudio:true, ptVoice:true }, days:{}, streak:{last:null,count:0}, errors:{} };
 }
+function addError(j){ state.errors[j] = (state.errors[j]||0) + 1; save(); }
+function clearError(j){ if(state.errors[j]){ state.errors[j]--; if(state.errors[j]<=0) delete state.errors[j]; save(); } }
 function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
 function today(){ return new Date().toISOString().slice(0,10); }
-function dayLog(){ const t=today(); if(!state.days[t]) state.days[t]={new:0,rev:0}; return state.days[t]; }
+function dayLog(){ const t=today(); if(!state.days[t]) state.days[t]={new:0,rev:0,study:false,practice:false,listen:0,dialog:false}; return state.days[t]; }
 function bumpStreak(){
   const t=today(), st=state.streak;
   if(st.last===t) return;
@@ -467,13 +562,14 @@ function speakJP(str, rate, onend){ return speak(plainJP(str), "ja-JP", rate, on
 const main = document.getElementById("main");
 let selectedDecks = DECKS.map(d=>d.id); // todos por padrão
 function showScreen(name, arg){
-  stopSpeak(); stopListen();
+  stopSpeak(); stopListen(); dlgPlaying = false;
   if(name==="home") renderHome();
   if(name==="study") startStudy();
   if(name==="listen") renderListen();
   if(name==="shadow") renderShadow();
   if(name==="browse") renderBrowse();
   if(name==="practice") renderPractice();
+  if(name==="dialogs") renderDialogs(arg);
   if(name==="settings") renderSettings();
 }
 
@@ -498,11 +594,29 @@ function deckCounts(d){
   });
   return {due,nw};
 }
+function missionHTML(){
+  const dl = dayLog();
+  const c = counts();
+  const m1 = dl.study || (c.due===0 && dl.rev+dl.new>0);
+  const m2 = dl.practice;
+  const m3 = dl.listen>=10 || dl.dialog;
+  const all = m1&&m2&&m3;
+  return `<div class="mission">
+    <h3>${all?"🎌 Missão do dia completa! すごい！":"⚡ <span>Missão do dia</span>"}</h3>
+    <div class="m-item ${m1?"done":""}"><span class="mk">${m1?"✓":"1"}</span> Estudar: zerar as revisões do dia</div>
+    <div class="m-item ${m2?"done":""}"><span class="mk">${m2?"✓":"2"}</span> Praticar: 1 rodada de exercícios</div>
+    <div class="m-item ${m3?"done":""}"><span class="mk">${m3?"✓":"3"}</span> Ouvir: 10 frases ou 1 diálogo completo</div>
+  </div>`;
+}
+function tipHTML(){
+  const dayN = Math.floor(Date.now()/864e5);
+  return `<div class="tip-card">💡 <b>Dica do dia:</b> ${TIPS[dayN % TIPS.length]}</div>`;
+}
 function renderHome(){
   const c = counts();
   const dl = dayLog();
   const newLeft = Math.max(0, state.settings.newPerDay - dl.new);
-  main.innerHTML = `
+  main.innerHTML = missionHTML() + `
     <div class="stats">
       <div class="stat due"><div class="num">${c.due}</div><div class="lbl">para revisar</div></div>
       <div class="stat new"><div class="num">${newLeft}</div><div class="lbl">novos hoje</div></div>
@@ -523,9 +637,11 @@ function renderHome(){
       <button class="mode-btn m-listen" onclick="showScreen('listen')">🎧 Ouvir<small>modo trem / fones</small></button>
       <button class="mode-btn m-shadow" onclick="showScreen('shadow')">🗣 Shadowing<small>ouvir e repetir</small></button>
       <button class="mode-btn m-browse" onclick="showScreen('browse')">🔍 Navegar<small>todas as palavras</small></button>
-      <button class="mode-btn" style="grid-column:1/-1;background:linear-gradient(135deg,#e8b44a,#c99230)" onclick="showScreen('practice')">✏️ Praticar<small>quiz, montar frases, partículas, escuta</small></button>
+      <button class="mode-btn" style="background:linear-gradient(135deg,#e8b44a,#c99230)" onclick="showScreen('practice')">✏️ Praticar<small>quiz, frases, partículas</small></button>
+      <button class="mode-btn" style="background:linear-gradient(135deg,#e05555,#b03a3a)" onclick="showScreen('dialogs')">💬 Diálogos<small>situações reais com áudio</small></button>
     </div>
-    <p class="tip">Toque nos decks para incluir/excluir das sessões.<br>Estude um pouco todo dia — a constância vale mais que a duração.</p>
+    ${tipHTML()}
+    <p class="tip">Toque nos decks para incluir/excluir das sessões.</p>
   `;
 }
 function toggleDeck(id){
@@ -559,6 +675,7 @@ function startStudy(){
 function renderStudyCard(){
   if(qi >= queue.length){
     const dl = dayLog();
+    if(dl.rev+dl.new>0){ dl.study = true; save(); }
     main.innerHTML = `
       <div class="top-bar"><button class="back" onclick="showScreen('home')">‹ Início</button><span></span></div>
       <div class="done-box">
@@ -622,6 +739,7 @@ function doGrade(g){
   const cs = getCS(item.key);
   const wasNew = cs.st==="new";
   grade(cs, g);
+  if(g===1) addError(item.card.j);
   const dl = dayLog();
   if(wasNew) dl.new++; else dl.rev++;
   bumpStreak();
@@ -709,6 +827,7 @@ function showListenCard(autoplay){
 }
 function playListenItem(){
   if(!listenPlaying) return;
+  const dl = dayLog(); dl.listen = (dl.listen||0)+1; save();
   const it = listenCards[listenIdx];
   const jpText = plainJP(it.card.j) + (it.card.ex ? "。" + plainJP(it.card.ex) : "");
   const sayPT = ()=>{
@@ -816,18 +935,19 @@ function chunkEx(ex){
   });
   return chunks;
 }
-function genQ(type, pool){
-  const exPool = pool.filter(c=>c.ex);
+function genQ(type, pool, tp){
+  tp = (tp && tp.length) ? tp : pool; // tp = de onde sai a pergunta; pool = distratores
+  const exPool = tp.filter(c=>c.ex);
   if(type==="mc_jp"){
-    const c = pool[Math.floor(Math.random()*pool.length)];
+    const c = tp[Math.floor(Math.random()*tp.length)];
     return {type, card:c, opts: shuffle([c.pt, ...pick(pool.map(x=>x.pt),3,c.pt)]), ans:c.pt};
   }
   if(type==="mc_pt"){
-    const c = pool[Math.floor(Math.random()*pool.length)];
+    const c = tp[Math.floor(Math.random()*tp.length)];
     return {type, card:c, opts: shuffle([c.j, ...pick(pool.map(x=>x.j),3,c.j)]), ans:c.j};
   }
   if(type==="listen"){
-    const c = exPool.length?exPool[Math.floor(Math.random()*exPool.length)]:pool[Math.floor(Math.random()*pool.length)];
+    const c = exPool.length?exPool[Math.floor(Math.random()*exPool.length)]:tp[Math.floor(Math.random()*tp.length)];
     return {type, card:c, opts: shuffle([c.pt, ...pick(pool.map(x=>x.pt),3,c.pt)]), ans:c.pt};
   }
   if(type==="particle"){
@@ -861,6 +981,7 @@ const PR_TYPES = [
   ["particle","⭕ Partículas","Complete は・を・に・で…"],
   ["build","🧩 Montar frase","Ordene os pedaços da frase"],
   ["mix","🎲 Misto","Todos os tipos misturados"],
+  ["errors","🔁 Meus erros","Refaça o que você errou"],
 ];
 function renderPractice(){
   main.innerHTML = `
@@ -868,7 +989,11 @@ function renderPractice(){
     <p style="font-weight:700;font-size:17px;margin:4px 4px 2px">Escolha o exercício</p>
     <p style="color:var(--muted);font-size:13px;margin:0 4px">${PR_LEN} questões por rodada, com os decks selecionados</p>
     <div class="pr-type">
-      ${PR_TYPES.map(t=>`<button class="mode-btn" style="background:var(--card);border:1px solid #2c3245" onclick="startPractice('${t[0]}')">${t[1]}<small>${t[2]}</small></button>`).join("")}
+      ${PR_TYPES.map(t=>{
+        const nErr = Object.keys(state.errors||{}).length;
+        const label = t[0]==="errors" && nErr>0 ? t[1]+" ("+nErr+")" : t[1];
+        return `<button class="mode-btn" style="background:var(--card);border:1px solid #2c3245" onclick="startPractice('${t[0]}')">${label}<small>${t[2]}</small></button>`;
+      }).join("")}
     </div>`;
 }
 function startPractice(type){
@@ -876,9 +1001,19 @@ function startPractice(type){
   const pool = prPool();
   const kinds = ["mc_jp","mc_pt","listen","particle","build"];
   prQs = [];
-  for(let i=0;i<PR_LEN;i++){
-    const k = type==="mix" ? kinds[Math.floor(Math.random()*kinds.length)] : type;
-    prQs.push(genQ(k, pool));
+  if(type==="errors"){
+    const errPool = pool.filter(c=>state.errors[c.j]);
+    if(!errPool.length){ toast("Nenhum erro pendente — parabéns! 🎉"); return; }
+    const ekinds = ["mc_jp","mc_pt","listen"];
+    const n = Math.min(PR_LEN, Math.max(5, errPool.length*2));
+    for(let i=0;i<n;i++){
+      prQs.push(genQ(ekinds[Math.floor(Math.random()*ekinds.length)], pool, errPool));
+    }
+  } else {
+    for(let i=0;i<PR_LEN;i++){
+      const k = type==="mix" ? kinds[Math.floor(Math.random()*kinds.length)] : type;
+      prQs.push(genQ(k, pool));
+    }
   }
   prIdx = 0; prScore = 0;
   renderPrQ();
@@ -886,6 +1021,7 @@ function startPractice(type){
 function renderPrQ(){
   stopSpeak();
   if(prIdx>=prQs.length){
+    const dl = dayLog(); dl.practice = true; save();
     const pct = Math.round(prScore/prQs.length*100);
     main.innerHTML = `
       <div class="top-bar"><button class="back" onclick="showScreen('home')">‹ Início</button><span></span></div>
@@ -980,7 +1116,7 @@ function prCheckBuild(){
   const fb = document.getElementById("prFb");
   fb.className = "pr-feedback " + (ok?"ok":"no");
   fb.innerHTML = (ok?"⭕ Correto! ":"❌ Quase! Resposta: ") + `<span style="font-size:17px">${rubyHTML(q.card.ex)}</span>`;
-  if(ok) prScore++;
+  if(ok) prScore++; else addError(q.card.j);
   speakJP(q.card.ex, 0.85);
   setTimeout(()=>{prIdx++;renderPrQ();}, ok?1800:3200);
 }
@@ -999,9 +1135,65 @@ function prAnswer(btn, idx){
   const fb = document.getElementById("prFb");
   fb.className = "pr-feedback " + (ok?"ok":"no");
   fb.textContent = ok ? "⭕ 正解！ Correto!" : "❌ Resposta certa: " + plainJP(q.ans);
-  if(ok) prScore++;
+  if(ok){ prScore++; if(prCurType==="errors") clearError(q.card.j); }
+  else addError(q.card.j);
   if(q.type!=="listen") speakJP(q.card.j, 0.9);
   setTimeout(()=>{prIdx++;renderPrQ();}, ok?1200:2600);
+}
+
+// ---------- DIÁLOGOS ----------
+let dlgPlaying = false;
+function renderDialogs(idx){
+  if(typeof idx === "number"){ renderDialogDetail(idx); return; }
+  main.innerHTML = `
+    <div class="top-bar"><button class="back" onclick="showScreen('home')">‹ Início</button><span></span></div>
+    <p style="font-weight:700;font-size:17px;margin:4px 4px 2px">Diálogos de situações reais</p>
+    <p style="color:var(--muted);font-size:13px;margin:0 4px 12px">Ouça, leia e repita — depois tente falar sua parte sozinho</p>
+    ${DIALOGUES.map((d,i)=>`<div class="deck" onclick="showScreen('dialogs',${i})">
+      <div><div class="d-name">${rubyHTML(d.t)}</div><div class="d-sub">${esc(d.pt)} · ${d.lines.length} falas</div></div>
+      <div class="d-count">›</div>
+    </div>`).join("")}`;
+}
+function renderDialogDetail(idx){
+  const d = DIALOGUES[idx];
+  main.innerHTML = `
+    <div class="top-bar"><button class="back" onclick="showScreen('dialogs')">‹ Diálogos</button><span></span></div>
+    <p style="font-weight:700;font-size:17px;margin:4px 4px 10px;line-height:1.9">${rubyHTML(d.t)}</p>
+    ${d.lines.map((l,i)=>`<div class="dlg-line ${l.s==="B"?"spB":""}" id="dlgL${i}" onclick="dlgLine(${idx},${i})">
+      <div class="dl-sp">${l.s==="A"?"🔵 A":"🔴 B"}</div>
+      <div class="dl-jp">${rubyHTML(l.j)}</div>
+      <div class="dl-pt">${esc(l.pt)}</div>
+    </div>`).join("")}
+    <button class="wide-btn" style="background:var(--blue);color:#fff;border:none" onclick="dlgPlayAll(${idx})" id="dlgAllBtn">▶︎ Ouvir o diálogo inteiro</button>
+    <p class="tip">Toque em cada fala para ouvir.<br>Desafio: cubra o português e tente entender só pelo japonês.</p>`;
+}
+function dlgLine(idx,i){
+  dlgPlaying = false;
+  stopSpeak();
+  highlightLine(i);
+  speakJP(DIALOGUES[idx].lines[i].j, 0.85, ()=>highlightLine(-1));
+}
+function highlightLine(i){
+  document.querySelectorAll(".dlg-line").forEach((el,k)=>el.classList.toggle("playing", k===i));
+}
+function dlgPlayAll(idx){
+  const d = DIALOGUES[idx];
+  if(dlgPlaying){ dlgPlaying=false; stopSpeak(); highlightLine(-1); const b=document.getElementById("dlgAllBtn"); if(b)b.textContent="▶︎ Ouvir o diálogo inteiro"; return; }
+  dlgPlaying = true;
+  const b = document.getElementById("dlgAllBtn"); if(b) b.textContent = "⏸ Parar";
+  let i = 0;
+  const next = ()=>{
+    if(!dlgPlaying) return;
+    if(i >= d.lines.length){
+      dlgPlaying = false; highlightLine(-1);
+      const dl = dayLog(); dl.dialog = true; save();
+      const bb = document.getElementById("dlgAllBtn"); if(bb) bb.textContent = "✓ Concluído! Ouvir de novo";
+      return;
+    }
+    highlightLine(i);
+    speakJP(d.lines[i].j, 0.85, ()=>{ i++; setTimeout(next, 600); });
+  };
+  next();
 }
 
 // ---------- NAVEGAR ----------
