@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="日本語 Now">
+<title>日本語 Now — Japonês para o dia a dia e o 現場</title>
+<style>
+:root{
+  --bg:#0f1117; --card:#1a1e2a; --card2:#232838; --text:#e8eaf0; --muted:#8a91a5;
+  --accent:#e94560; --accent2:#4ecca3; --blue:#4a9fe8; --amber:#e8b44a;
+  --danger:#e05555; --hard:#e8964a; --good:#4ecca3; --easy:#4a9fe8;
+  --radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;
+  overscroll-behavior:none;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+#app{max-width:560px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px}
+header h1{font-size:19px;font-weight:700}
+header h1 span{color:var(--accent)}
+.hdr-btns{display:flex;gap:8px}
+.icon-btn{
+  background:var(--card);border:1px solid #2c3245;color:var(--text);
+  border-radius:12px;padding:8px 12px;font-size:14px;font-weight:600;cursor:pointer;
+}
+.icon-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+main{flex:1;padding:8px 16px 32px;display:flex;flex-direction:column}
+.hidden{display:none!important}
+
+/* furigana */
+ruby rt{font-size:0.5em;color:var(--muted);opacity:1;transition:opacity .15s}
+body.no-furi ruby rt{opacity:0;visibility:hidden}
+
+/* home */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0 18px}
+.stat{background:var(--card);border-radius:var(--radius);padding:14px 8px;text-align:center}
+.stat .num{font-size:26px;font-weight:800}
+.stat .lbl{font-size:11px;color:var(--muted);margin-top:2px}
+.stat.due .num{color:var(--accent)}
+.stat.new .num{color:var(--accent2)}
+.stat.streak .num{color:var(--amber)}
+.deck-list{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.deck{
+  background:var(--card);border-radius:var(--radius);padding:16px;display:flex;
+  align-items:center;justify-content:space-between;cursor:pointer;border:1px solid transparent;
+}
+.deck.selected{border-color:var(--accent2)}
+.deck .d-name{font-size:16px;font-weight:700}
+.deck .d-sub{font-size:12px;color:var(--muted);margin-top:3px}
+.deck .d-count{font-size:13px;color:var(--muted);text-align:right;line-height:1.5}
+.deck .d-count b{color:var(--accent)}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mode-btn{
+  border:none;border-radius:var(--radius);padding:18px 12px;font-size:16px;font-weight:700;
+  color:#fff;cursor:pointer;text-align:center;line-height:1.3;
+}
+.mode-btn small{display:block;font-size:11px;font-weight:500;opacity:.85;margin-top:4px}
+.m-study{background:linear-gradient(135deg,#e94560,#c73652)}
+.m-listen{background:linear-gradient(135deg,#4a9fe8,#3577b8)}
+.m-shadow{background:linear-gradient(135deg,#9b59b6,#7d3f99)}
+.m-browse{background:linear-gradient(135deg,#3d8f74,#2e6e59)}
+.tip{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.6}
+
+/* study */
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.back{background:none;border:none;color:var(--blue);font-size:15px;font-weight:600;cursor:pointer;padding:6px}
+.progress-txt{font-size:13px;color:var(--muted)}
+.card-box{
+  background:var(--card);border-radius:20px;padding:28px 20px;flex:1;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  min-height:300px;cursor:pointer;position:relative;
+}
+.card-tag{position:absolute;top:12px;left:14px;font-size:11px;color:var(--muted);background:var(--card2);padding:3px 10px;border-radius:10px}
+.card-new-badge{position:absolute;top:12px;right:14px;font-size:11px;color:var(--accent2);background:rgba(78,204,163,.12);padding:3px 10px;border-radius:10px;font-weight:700}
+.jp-main{font-size:34px;font-weight:700;line-height:1.7}
+.jp-main.small{font-size:26px}
+.answer{margin-top:18px;width:100%;border-top:1px solid #2c3245;padding-top:18px}
+.pt-mean{font-size:20px;font-weight:700;color:var(--accent2)}
+.reading{font-size:15px;color:var(--muted);margin-top:6px}
+.example{margin-top:14px;background:var(--card2);border-radius:12px;padding:12px;font-size:17px;line-height:2}
+.example .ex-pt{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.5}
+.audio-btn{
+  margin-top:16px;background:var(--card2);border:1px solid #2c3245;color:var(--blue);
+  border-radius:24px;padding:10px 22px;font-size:15px;font-weight:600;cursor:pointer;
+}
+.reveal-hint{color:var(--muted);font-size:13px;margin-top:22px}
+.grade-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.grade-btn{border:none;border-radius:14px;padding:14px 4px;font-size:14px;font-weight:700;color:#fff;cursor:pointer}
+.grade-btn small{display:block;font-size:10px;font-weight:500;opacity:.8;margin-top:2px}
+.g-fail{background:var(--danger)} .g-hard{background:var(--hard)} .g-good{background:var(--good)} .g-easy{background:var(--easy)}
+/* praticar */
+.opt-btn{
+  display:block;width:100%;background:var(--card2);border:2px solid #2c3245;color:var(--text);
+  border-radius:14px;padding:14px;font-size:17px;font-weight:600;cursor:pointer;margin-top:10px;
+  text-align:center;line-height:1.8;transition:border-color .15s,background .15s;
+}
+.opt-btn.correct{border-color:var(--good);background:rgba(78,204,163,.15)}
+.opt-btn.wrong{border-color:var(--danger);background:rgba(224,85,85,.12)}
+.opt-btn:disabled{cursor:default;opacity:.9}
+.chunk-area{min-height:64px;background:var(--card2);border:2px dashed #3a4055;border-radius:14px;padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.chunk{background:var(--card);border:1px solid #3a4055;color:var(--text);border-radius:10px;padding:8px 12px;font-size:18px;font-weight:600;cursor:pointer;line-height:1.9}
+.chunk.placed{background:rgba(74,159,232,.15);border-color:var(--blue)}
+.chunk-bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:6px}
+.pr-type{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.pr-feedback{text-align:center;font-size:15px;font-weight:700;margin-top:12px;min-height:22px}
+.pr-feedback.ok{color:var(--good)} .pr-feedback.no{color:var(--danger)}
+.done-box{text-align:center;padding:40px 20px}
+.done-box .big{font-size:48px}
+.done-box h2{margin:14px 0 8px}
+.done-box p{color:var(--muted);font-size:14px;line-height:1.6}
+
+/* listen */
+.listen-card{background:var(--card);border-radius:20px;padding:30px 20px;text-align:center;margin-bottom:14px;min-height:220px;display:flex;flex-direction:column;justify-content:center}
+.listen-controls{display:flex;gap:10px;justify-content:center;align-items:center;margin-top:8px}
+.ctrl-btn{background:var(--card);border:1px solid #2c3245;color:var(--text);border-radius:50%;width:56px;height:56px;font-size:20px;cursor:pointer}
+.ctrl-btn.play{width:72px;height:72px;font-size:26px;background:var(--blue);border-color:var(--blue);color:#fff}
+.listen-opts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+.chip{background:var(--card);border:1px solid #2c3245;color:var(--muted);border-radius:20px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer}
+.chip.on{background:rgba(74,159,232,.15);border-color:var(--blue);color:var(--blue)}
+
+/* browse */
+.search{width:100%;background:var(--card);border:1px solid #2c3245;border-radius:12px;padding:12px 14px;color:var(--text);font-size:16px;margin-bottom:10px}
+.browse-item{background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.browse-item .b-jp{font-size:19px;line-height:1.9;font-weight:600}
+.browse-item .b-pt{font-size:12px;color:var(--muted);margin-top:2px}
+.b-play{background:none;border:none;color:var(--blue);font-size:20px;cursor:pointer;padding:6px}
+
+/* settings */
+.set-row{background:var(--card);border-radius:12px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.set-row .s-lbl{font-size:15px;font-weight:600}
+.set-row .s-sub{font-size:12px;color:var(--muted);margin-top:2px}
+select,input[type=number]{background:var(--card2);color:var(--text);border:1px solid #2c3245;border-radius:8px;padding:8px;font-size:15px}
+.switch{position:relative;width:52px;height:30px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider-sw{position:absolute;inset:0;background:#3a4055;border-radius:30px;transition:.2s;cursor:pointer}
+.slider-sw:before{content:"";position:absolute;height:24px;width:24px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked + .slider-sw{background:var(--accent2)}
+.switch input:checked + .slider-sw:before{transform:translateX(22px)}
+.wide-btn{width:100%;background:var(--card);border:1px solid #2c3245;color:var(--blue);border-radius:12px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px}
+.toast{
+  position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--card2);
+  color:var(--text);padding:12px 22px;border-radius:24px;font-size:14px;box-shadow:0 4px 20px rgba(0,0,0,.4);
+  z-index:99;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;
+}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>日本語 <span>Now</span></h1>
+    <div class="hdr-btns">
+      <button class="icon-btn" id="furiBtn" onclick="toggleFuri()">ふりがな</button>
+      <button class="icon-btn" onclick="showScreen('settings')">⚙︎</button>
+    </div>
+  </header>
+  <main id="main"></main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   日本語 Now — app de estudo de japonês (SRS + furigana + áudio)
+   Conteúdo: dia a dia em Tokyo + 現場 (eletricista)
+   ============================================================ */
+
+// ---------- DADOS ----------
+// formato furigana: 漢字[かんじ] → <ruby>
+const DECKS = [
+  { id:"genba", name:"現場・Trabalho", sub:"Obra, elétrica, segurança, instruções", cards:[
+{j:"お疲[つか]れ様[さま]です",pt:"obrigado pelo trabalho (saudação universal no trabalho)",ex:"お疲[つか]れ様[さま]です。今日[きょう]も暑[あつ]いですね。",exPt:"Otsukaresama desu. Hoje também está quente, né."},
+{j:"お先[さき]に失礼[しつれい]します",pt:"com licença, vou indo antes (ao sair do trabalho)",ex:"お先[さき]に失礼[しつれい]します。また明日[あした]。",exPt:"Vou indo antes. Até amanhã."},
+{j:"よろしくお願[ねが]いします",pt:"conto com você / prazer (início de trabalho conjunto)",ex:"今日[きょう]からよろしくお願[ねが]いします。",exPt:"A partir de hoje, conto com vocês."},
+{j:"朝礼[ちょうれい]",pt:"reunião matinal (antes de começar o trabalho)",ex:"朝礼[ちょうれい]は八時[はちじ]からです。",exPt:"A reunião matinal começa às 8h."},
+{j:"KY活動[かつどう]",pt:"atividade de prevenção de riscos (危険予知 = prever perigos)",ex:"作業[さぎょう]の前[まえ]にKY活動[かつどう]をします。",exPt:"Antes do trabalho, fazemos a atividade de prevenção de riscos."},
+{j:"現場[げんば]",pt:"canteiro de obras / local de trabalho",ex:"明日[あした]の現場[げんば]は新宿[しんじゅく]です。",exPt:"O canteiro de amanhã é em Shinjuku."},
+{j:"親方[おやかた]",pt:"chefe / mestre de obra",ex:"親方[おやかた]に聞[き]いてください。",exPt:"Pergunte ao chefe."},
+{j:"職人[しょくにん]",pt:"profissional / artesão qualificado",ex:"彼[かれ]はベテランの職人[しょくにん]です。",exPt:"Ele é um profissional veterano."},
+{j:"作業[さぎょう]",pt:"trabalho / tarefa / operação",ex:"作業[さぎょう]を始[はじ]めます。",exPt:"Vou começar o trabalho."},
+{j:"休憩[きゅうけい]",pt:"pausa / descanso",ex:"十時[じゅうじ]に休憩[きゅうけい]しましょう。",exPt:"Vamos fazer pausa às 10h."},
+{j:"残業[ざんぎょう]",pt:"hora extra",ex:"今日[きょう]は残業[ざんぎょう]がありますか。",exPt:"Hoje tem hora extra?"},
+{j:"安全[あんぜん]第一[だいいち]",pt:"segurança em primeiro lugar",ex:"現場[げんば]では安全[あんぜん]第一[だいいち]です。",exPt:"No canteiro, segurança em primeiro lugar."},
+{j:"危[あぶ]ない！",pt:"cuidado! / perigo!",ex:"危[あぶ]ない！上[うえ]を見[み]て！",exPt:"Cuidado! Olhe para cima!"},
+{j:"気[き]をつけてください",pt:"tome cuidado, por favor",ex:"足元[あしもと]に気[き]をつけてください。",exPt:"Cuidado onde pisa."},
+{j:"ヘルメット",pt:"capacete",ex:"ヘルメットをかぶってください。",exPt:"Use o capacete, por favor."},
+{j:"安全帯[あんぜんたい]",pt:"cinto de segurança (trabalho em altura)",ex:"高[たか]い所[ところ]では安全帯[あんぜんたい]を使[つか]います。",exPt:"Em lugares altos, usamos o cinto de segurança."},
+{j:"軍手[ぐんて]",pt:"luvas de trabalho",ex:"軍手[ぐんて]を持[も]ってきましたか。",exPt:"Você trouxe as luvas?"},
+{j:"安全靴[あんぜんぐつ]",pt:"botas de segurança",ex:"現場[げんば]では安全靴[あんぜんぐつ]が必要[ひつよう]です。",exPt:"No canteiro é obrigatório usar botas de segurança."},
+{j:"感電[かんでん]",pt:"choque elétrico",ex:"感電[かんでん]に注意[ちゅうい]してください。",exPt:"Cuidado com choque elétrico."},
+{j:"停電[ていでん]",pt:"queda de energia / corte de luz",ex:"午後[ごご]から停電[ていでん]します。",exPt:"A energia será cortada à tarde."},
+{j:"立入禁止[たちいりきんし]",pt:"entrada proibida (placa)",ex:"ここは立入禁止[たちいりきんし]です。",exPt:"Aqui é proibida a entrada."},
+{j:"指差[ゆびさ]し確認[かくにん]",pt:"verificação apontando o dedo (procedimento de segurança)",ex:"スイッチを切[き]る時[とき]、指差[ゆびさ]し確認[かくにん]をします。",exPt:"Ao desligar o interruptor, faço a verificação apontando."},
+{j:"火気厳禁[かきげんきん]",pt:"proibido fogo (placa)",ex:"この倉庫[そうこ]は火気厳禁[かきげんきん]です。",exPt:"Neste depósito é proibido fogo."},
+{j:"高所作業[こうしょさぎょう]",pt:"trabalho em altura",ex:"明日[あした]は高所作業[こうしょさぎょう]があります。",exPt:"Amanhã tem trabalho em altura."},
+{j:"足場[あしば]",pt:"andaime",ex:"足場[あしば]の上[うえ]で作業[さぎょう]します。",exPt:"Vou trabalhar em cima do andaime."},
+{j:"脚立[きゃたつ]",pt:"escada tipo A",ex:"脚立[きゃたつ]を押[お]さえてください。",exPt:"Segure a escada, por favor."},
+{j:"工具[こうぐ]",pt:"ferramenta",ex:"工具[こうぐ]を片付[かたづ]けてください。",exPt:"Guarde as ferramentas, por favor."},
+{j:"ペンチ",pt:"alicate",ex:"ペンチを貸[か]してください。",exPt:"Me empresta o alicate?"},
+{j:"ニッパー",pt:"alicate de corte",ex:"ニッパーで電線[でんせん]を切[き]ります。",exPt:"Corto o fio com o alicate de corte."},
+{j:"ドライバー",pt:"chave de fenda (geral)",ex:"ドライバーはどこですか。",exPt:"Onde está a chave de fenda?"},
+{j:"プラスドライバー",pt:"chave phillips",ex:"プラスドライバーを取[と]ってください。",exPt:"Pega a chave phillips pra mim."},
+{j:"マイナスドライバー",pt:"chave de fenda comum",ex:"マイナスドライバーの方[ほう]がいいです。",exPt:"É melhor a chave de fenda comum."},
+{j:"モンキーレンチ",pt:"chave inglesa ajustável",ex:"モンキーレンチで締[し]めます。",exPt:"Aperto com a chave inglesa."},
+{j:"電動[でんどう]ドリル",pt:"furadeira elétrica",ex:"電動[でんどう]ドリルで穴[あな]を開[あ]けます。",exPt:"Faço o furo com a furadeira."},
+{j:"メジャー",pt:"trena",ex:"メジャーで長[なが]さを測[はか]ってください。",exPt:"Meça o comprimento com a trena."},
+{j:"カッター",pt:"estilete",ex:"カッターの刃[は]に気[き]をつけて。",exPt:"Cuidado com a lâmina do estilete."},
+{j:"絶縁[ぜつえん]テープ",pt:"fita isolante",ex:"絶縁[ぜつえん]テープを巻[ま]いてください。",exPt:"Enrole com fita isolante."},
+{j:"検電器[けんでんき]",pt:"detector de tensão",ex:"検電器[けんでんき]で確認[かくにん]してから触[さわ]ります。",exPt:"Só toco depois de verificar com o detector de tensão."},
+{j:"圧着[あっちゃく]工具[こうぐ]",pt:"alicate de crimpar",ex:"圧着[あっちゃく]工具[こうぐ]で端子[たんし]をつけます。",exPt:"Fixo o terminal com o alicate de crimpar."},
+{j:"電気[でんき]",pt:"eletricidade / luz",ex:"電気[でんき]をつけてください。",exPt:"Acenda a luz, por favor."},
+{j:"電気工事[でんきこうじ]",pt:"instalação elétrica / obra elétrica",ex:"来週[らいしゅう]、電気工事[でんきこうじ]があります。",exPt:"Semana que vem tem obra elétrica."},
+{j:"電気工事士[でんきこうじし]",pt:"eletricista (qualificação oficial no Japão)",ex:"電気工事士[でんきこうじし]の資格[しかく]を取[と]りたいです。",exPt:"Quero tirar a qualificação de eletricista."},
+{j:"電線[でんせん]",pt:"fio elétrico",ex:"この電線[でんせん]は古[ふる]いです。",exPt:"Este fio é velho."},
+{j:"ケーブル",pt:"cabo",ex:"ケーブルを引[ひ]っ張[ぱ]らないでください。",exPt:"Não puxe o cabo."},
+{j:"配線[はいせん]",pt:"fiação",ex:"配線[はいせん]を確認[かくにん]します。",exPt:"Vou verificar a fiação."},
+{j:"コンセント",pt:"tomada",ex:"コンセントを取[と]り付[つ]けます。",exPt:"Vou instalar a tomada."},
+{j:"スイッチ",pt:"interruptor",ex:"スイッチを切[き]ってください。",exPt:"Desligue o interruptor."},
+{j:"ブレーカー",pt:"disjuntor",ex:"ブレーカーが落[お]ちました。",exPt:"O disjuntor caiu."},
+{j:"分電盤[ぶんでんばん]",pt:"quadro de distribuição",ex:"分電盤[ぶんでんばん]はどこにありますか。",exPt:"Onde fica o quadro de distribuição?"},
+{j:"照明[しょうめい]",pt:"iluminação",ex:"照明[しょうめい]器具[きぐ]を交換[こうかん]します。",exPt:"Vou trocar a luminária."},
+{j:"蛍光灯[けいこうとう]",pt:"lâmpada fluorescente",ex:"蛍光灯[けいこうとう]が切[き]れています。",exPt:"A lâmpada fluorescente queimou."},
+{j:"電球[でんきゅう]",pt:"lâmpada",ex:"新[あたら]しい電球[でんきゅう]をください。",exPt:"Me dá uma lâmpada nova."},
+{j:"配管[はいかん]",pt:"conduíte / tubulação",ex:"配管[はいかん]の中[なか]にケーブルを通[とお]します。",exPt:"Passo o cabo por dentro do conduíte."},
+{j:"電圧[でんあつ]",pt:"tensão / voltagem",ex:"電圧[でんあつ]を測[はか]ってください。",exPt:"Meça a tensão, por favor."},
+{j:"電流[でんりゅう]",pt:"corrente elétrica",ex:"電流[でんりゅう]が流[なが]れています。",exPt:"Está passando corrente."},
+{j:"アース",pt:"aterramento (terra)",ex:"アースをつないでください。",exPt:"Conecte o aterramento."},
+{j:"絶縁[ぜつえん]",pt:"isolamento (elétrico)",ex:"絶縁[ぜつえん]が悪[わる]いです。",exPt:"O isolamento está ruim."},
+{j:"ショート",pt:"curto-circuito",ex:"ここでショートしたみたいです。",exPt:"Parece que deu curto aqui."},
+{j:"図面[ずめん]",pt:"planta / desenho técnico",ex:"図面[ずめん]を見[み]せてください。",exPt:"Me mostra a planta, por favor."},
+{j:"資材[しざい]",pt:"materiais (de obra)",ex:"資材[しざい]をトラックから降[お]ろします。",exPt:"Vou descarregar os materiais do caminhão."},
+{j:"持[も]ってきてください",pt:"traga, por favor",ex:"脚立[きゃたつ]を持[も]ってきてください。",exPt:"Traga a escada, por favor."},
+{j:"締[し]める",pt:"apertar (parafuso, porca)",ex:"ネジをしっかり締[し]めてください。",exPt:"Aperte bem o parafuso."},
+{j:"緩[ゆる]める",pt:"afrouxar / soltar",ex:"少[すこ]し緩[ゆる]めてください。",exPt:"Afrouxe um pouco."},
+{j:"切[き]る",pt:"cortar / desligar",ex:"電源[でんげん]を切[き]ってから作業[さぎょう]します。",exPt:"Trabalho só depois de desligar a energia."},
+{j:"つなぐ",pt:"conectar / ligar",ex:"この線[せん]とこの線[せん]をつなぎます。",exPt:"Conecto este fio com este fio."},
+{j:"外[はず]す",pt:"remover / desconectar",ex:"カバーを外[はず]してください。",exPt:"Remova a tampa, por favor."},
+{j:"測[はか]る",pt:"medir",ex:"高[たか]さを測[はか]ります。",exPt:"Vou medir a altura."},
+{j:"確認[かくにん]する",pt:"verificar / conferir",ex:"もう一度[いちど]確認[かくにん]します。",exPt:"Vou verificar mais uma vez."},
+{j:"片付[かたづ]ける",pt:"arrumar / guardar / limpar",ex:"終[お]わったら片付[かたづ]けましょう。",exPt:"Quando terminar, vamos arrumar."},
+{j:"手伝[てつだ]う",pt:"ajudar",ex:"手伝[てつだ]いましょうか。",exPt:"Quer que eu ajude?"},
+{j:"運[はこ]ぶ",pt:"carregar / transportar",ex:"この箱[はこ]を二階[にかい]に運[はこ]んでください。",exPt:"Leve esta caixa para o segundo andar."},
+{j:"取[と]り付[つ]ける",pt:"instalar / fixar",ex:"エアコンを取[と]り付[つ]けます。",exPt:"Vou instalar o ar-condicionado."},
+{j:"電源[でんげん]を切[き]る",pt:"desligar a energia",ex:"まず電源[でんげん]を切[き]ってください。",exPt:"Primeiro, desligue a energia."},
+{j:"電源[でんげん]を入[い]れる",pt:"ligar a energia",ex:"電源[でんげん]を入[い]れてもいいですか。",exPt:"Posso ligar a energia?"},
+{j:"もう一度[いちど]お願[ねが]いします",pt:"mais uma vez, por favor (repita)",ex:"すみません、もう一度[いちど]お願[ねが]いします。",exPt:"Desculpe, pode repetir?"},
+{j:"ゆっくり話[はな]してください",pt:"fale devagar, por favor",ex:"すみません、ゆっくり話[はな]してください。",exPt:"Desculpe, fale devagar por favor."},
+{j:"これは何[なん]ですか",pt:"o que é isto?",ex:"すみません、これは何[なん]ですか。",exPt:"Com licença, o que é isto?"},
+{j:"〜はどこですか",pt:"onde fica ~?",ex:"トイレはどこですか。",exPt:"Onde fica o banheiro?"},
+{j:"わかりました",pt:"entendi",ex:"はい、わかりました。すぐやります。",exPt:"Sim, entendi. Já faço."},
+{j:"すみません、わかりません",pt:"desculpe, não entendi / não sei",ex:"すみません、まだ日本語[にほんご]がわかりません。",exPt:"Desculpe, ainda não entendo bem japonês."},
+{j:"終[お]わりました",pt:"terminei / acabou",ex:"この作業[さぎょう]は終[お]わりました。次[つぎ]は何[なに]ですか。",exPt:"Terminei este trabalho. Qual é o próximo?"},
+{j:"大丈夫[だいじょうぶ]です",pt:"está tudo bem / sem problema",ex:"大丈夫[だいじょうぶ]です。一人[ひとり]でできます。",exPt:"Tudo bem. Consigo sozinho."},
+{j:"何時[なんじ]までですか",pt:"até que horas?",ex:"今日[きょう]の作業[さぎょう]は何時[なんじ]までですか。",exPt:"O trabalho de hoje vai até que horas?"},
+] },
+  { id:"daily", name:"日常生活・Dia a dia", sub:"Trem, konbini, apartamento, saúde", cards:[
+{j:"駅[えき]",pt:"estação (de trem)",ex:"駅[えき]まで歩[ある]いて十分[じゅっぷん]です。",exPt:"São 10 minutos a pé até a estação."},
+{j:"電車[でんしゃ]",pt:"trem",ex:"電車[でんしゃ]で現場[げんば]に行[い]きます。",exPt:"Vou ao canteiro de trem."},
+{j:"改札[かいさつ]",pt:"catraca da estação",ex:"改札[かいさつ]の前[まえ]で待[ま]っています。",exPt:"Estou esperando em frente à catraca."},
+{j:"ICカード",pt:"cartão de transporte (Suica/Pasmo)",ex:"ICカードにチャージしたいです。",exPt:"Quero carregar o cartão."},
+{j:"定期券[ていきけん]",pt:"passe mensal de trem",ex:"会社[かいしゃ]が定期券[ていきけん]を払[はら]います。",exPt:"A empresa paga o passe mensal."},
+{j:"乗[の]り換[か]え",pt:"baldeação / troca de trem",ex:"新宿[しんじゅく]で乗[の]り換[か]えます。",exPt:"Faço baldeação em Shinjuku."},
+{j:"遅延[ちえん]",pt:"atraso (do trem)",ex:"電車[でんしゃ]が遅延[ちえん]しています。",exPt:"O trem está atrasado."},
+{j:"各駅停車[かくえきていしゃ]",pt:"trem que para em todas as estações",ex:"各駅停車[かくえきていしゃ]は時間[じかん]がかかります。",exPt:"O trem parador demora mais."},
+{j:"急行[きゅうこう]",pt:"trem expresso",ex:"急行[きゅうこう]はこの駅[えき]に止[と]まりません。",exPt:"O expresso não para nesta estação."},
+{j:"終電[しゅうでん]",pt:"último trem",ex:"終電[しゅうでん]に間[ま]に合[あ]いますか。",exPt:"Dá tempo de pegar o último trem?"},
+{j:"ホーム",pt:"plataforma",ex:"三番[さんばん]ホームから出発[しゅっぱつ]します。",exPt:"Parte da plataforma 3."},
+{j:"出口[でぐち]",pt:"saída",ex:"南口[みなみぐち]の出口[でぐち]で会[あ]いましょう。",exPt:"Vamos nos encontrar na saída sul."},
+{j:"〜行[ゆ]き",pt:"com destino a ~",ex:"この電車[でんしゃ]は東京[とうきょう]行[ゆ]きですか。",exPt:"Este trem vai para Tóquio?"},
+{j:"次[つぎ]の駅[えき]で降[お]ります",pt:"desço na próxima estação",ex:"すみません、次[つぎ]の駅[えき]で降[お]ります。",exPt:"Com licença, desço na próxima."},
+{j:"コンビニ",pt:"loja de conveniência",ex:"コンビニでお昼[ひる]を買[か]います。",exPt:"Compro o almoço no konbini."},
+{j:"お弁当[べんとう]",pt:"marmita / bentô",ex:"お弁当[べんとう]を温[あたた]めてください。",exPt:"Esquenta a marmita, por favor."},
+{j:"温[あたた]めますか",pt:"quer que esquente? (pergunta do caixa)",ex:"「温[あたた]めますか」「はい、お願[ねが]いします」",exPt:"\"Quer que esquente?\" \"Sim, por favor.\""},
+{j:"袋[ふくろ]",pt:"sacola",ex:"袋[ふくろ]はいりません。",exPt:"Não preciso de sacola."},
+{j:"レシート",pt:"nota / recibo",ex:"レシートをください。",exPt:"Me dá a nota, por favor."},
+{j:"お箸[はし]",pt:"hashi / palitos",ex:"お箸[はし]をつけてください。",exPt:"Coloca hashi, por favor."},
+{j:"飲[の]み物[もの]",pt:"bebida",ex:"何[なに]か飲[の]み物[もの]を買[か]いましょうか。",exPt:"Quer que eu compre alguma bebida?"},
+{j:"昼[ひる]ご飯[はん]",pt:"almoço",ex:"昼[ひる]ご飯[はん]は何[なに]を食[た]べますか。",exPt:"O que você vai comer no almoço?"},
+{j:"いくらですか",pt:"quanto custa?",ex:"すみません、これはいくらですか。",exPt:"Com licença, quanto custa isto?"},
+{j:"〜をください",pt:"me dê ~, por favor",ex:"これとこれをください。",exPt:"Me dê este e este, por favor."},
+{j:"アパート",pt:"apartamento",ex:"駅[えき]の近[ちか]くのアパートに住[す]んでいます。",exPt:"Moro num apartamento perto da estação."},
+{j:"家賃[やちん]",pt:"aluguel",ex:"家賃[やちん]は月[つき]七万円[ななまんえん]です。",exPt:"O aluguel é 70 mil ienes por mês."},
+{j:"ゴミ出[だ]し",pt:"colocar o lixo para fora",ex:"ゴミ出[だ]しは火曜日[かようび]と金曜日[きんようび]です。",exPt:"O lixo sai terça e sexta."},
+{j:"燃[も]えるゴミ",pt:"lixo queimável",ex:"これは燃[も]えるゴミですか。",exPt:"Isto é lixo queimável?"},
+{j:"大家[おおや]さん",pt:"proprietário / senhorio",ex:"大家[おおや]さんに連絡[れんらく]します。",exPt:"Vou avisar o proprietário."},
+{j:"電気代[でんきだい]",pt:"conta de luz",ex:"今月[こんげつ]の電気代[でんきだい]は高[たか]かったです。",exPt:"A conta de luz deste mês veio cara."},
+{j:"水道[すいどう]",pt:"água encanada",ex:"水道[すいどう]の調子[ちょうし]が悪[わる]いです。",exPt:"A água encanada está com problema."},
+{j:"ガス",pt:"gás",ex:"ガスの点検[てんけん]が来[き]ます。",exPt:"Vem a inspeção do gás."},
+{j:"病院[びょういん]",pt:"hospital",ex:"熱[ねつ]があるので病院[びょういん]に行[い]きます。",exPt:"Estou com febre, então vou ao hospital."},
+{j:"薬[くすり]",pt:"remédio",ex:"薬局[やっきょく]で薬[くすり]を買[か]います。",exPt:"Compro remédio na farmácia."},
+{j:"頭[あたま]が痛[いた]いです",pt:"estou com dor de cabeça",ex:"朝[あさ]から頭[あたま]が痛[いた]いです。",exPt:"Estou com dor de cabeça desde de manhã."},
+{j:"熱[ねつ]があります",pt:"estou com febre",ex:"熱[ねつ]があるので、今日[きょう]は休[やす]みます。",exPt:"Estou com febre, então hoje vou faltar."},
+{j:"疲[つか]れました",pt:"estou cansado",ex:"今日[きょう]はたくさん働[はたら]いて疲[つか]れました。",exPt:"Hoje trabalhei muito e estou cansado."},
+{j:"風邪[かぜ]",pt:"resfriado",ex:"風邪[かぜ]をひきました。",exPt:"Peguei um resfriado."},
+{j:"銀行[ぎんこう]",pt:"banco",ex:"銀行[ぎんこう]で口座[こうざ]を作[つく]りました。",exPt:"Abri uma conta no banco."},
+{j:"給料[きゅうりょう]",pt:"salário",ex:"給料[きゅうりょう]は月末[げつまつ]に入[はい]ります。",exPt:"O salário cai no fim do mês."},
+{j:"振[ふ]り込[こ]み",pt:"transferência bancária",ex:"家賃[やちん]は振[ふ]り込[こ]みで払[はら]います。",exPt:"Pago o aluguel por transferência."},
+{j:"役所[やくしょ]",pt:"prefeitura / repartição pública",ex:"役所[やくしょ]で手続[てつづ]きをします。",exPt:"Faço o trâmite na prefeitura."},
+{j:"在留[ざいりゅう]カード",pt:"cartão de residência (zairyū card)",ex:"在留[ざいりゅう]カードを見[み]せてください。",exPt:"Mostre o cartão de residência, por favor."},
+{j:"住所[じゅうしょ]",pt:"endereço",ex:"新[あたら]しい住所[じゅうしょ]を登録[とうろく]します。",exPt:"Vou registrar o novo endereço."},
+{j:"はんこ",pt:"carimbo pessoal (usado como assinatura)",ex:"ここにはんこを押[お]してください。",exPt:"Carimbe aqui, por favor."},
+{j:"今日[きょう]",pt:"hoje",ex:"今日[きょう]は忙[いそが]しいです。",exPt:"Hoje estou ocupado."},
+{j:"明日[あした]",pt:"amanhã",ex:"明日[あした]は休[やす]みです。",exPt:"Amanhã é folga."},
+{j:"昨日[きのう]",pt:"ontem",ex:"昨日[きのう]は残業[ざんぎょう]でした。",exPt:"Ontem fiz hora extra."},
+{j:"来週[らいしゅう]",pt:"semana que vem",ex:"来週[らいしゅう]から新[あたら]しい現場[げんば]です。",exPt:"Semana que vem começa o novo canteiro."},
+{j:"天気[てんき]",pt:"tempo / clima",ex:"明日[あした]の天気[てんき]はどうですか。",exPt:"Como estará o tempo amanhã?"},
+{j:"雨[あめ]",pt:"chuva",ex:"雨[あめ]なので作業[さぎょう]は中止[ちゅうし]です。",exPt:"Como está chovendo, o trabalho foi cancelado."},
+{j:"暑[あつ]い",pt:"quente (clima)",ex:"夏[なつ]の現場[げんば]はとても暑[あつ]いです。",exPt:"O canteiro no verão é muito quente."},
+{j:"寒[さむ]い",pt:"frio",ex:"今朝[けさ]は寒[さむ]かったですね。",exPt:"Hoje de manhã estava frio, né."},
+{j:"熱中症[ねっちゅうしょう]",pt:"insolação / mal do calor",ex:"熱中症[ねっちゅうしょう]に気[き]をつけて、水[みず]を飲[の]んでください。",exPt:"Cuidado com insolação — beba água."},
+{j:"ありがとうございます",pt:"muito obrigado",ex:"手伝[てつだ]ってくれて、ありがとうございます。",exPt:"Obrigado por me ajudar."},
+{j:"すみません",pt:"desculpe / com licença",ex:"すみません、ちょっといいですか。",exPt:"Com licença, tem um minuto?"},
+{j:"お願[ねが]いします",pt:"por favor",ex:"確認[かくにん]をお願[ねが]いします。",exPt:"Faça a verificação, por favor."},
+{j:"何時[なんじ]ですか",pt:"que horas são?",ex:"すみません、今[いま]何時[なんじ]ですか。",exPt:"Com licença, que horas são?"},
+{j:"ちょっと待[ま]ってください",pt:"espere um pouco, por favor",ex:"ちょっと待[ま]ってください。すぐ行[い]きます。",exPt:"Espera um pouco. Já vou."},
+{j:"また明日[あした]",pt:"até amanhã",ex:"お疲[つか]れ様[さま]でした。また明日[あした]。",exPt:"Bom trabalho hoje. Até amanhã."},
+] },
+  { id:"gram",  name:"文法・Gramática", sub:"Padrões N5–N4 em frases reais", cards:[
+{j:"〜てください",pt:"faça ~, por favor (pedido)",ex:"ここに名前[なまえ]を書[か]いてください。",exPt:"Escreva seu nome aqui, por favor."},
+{j:"〜ないでください",pt:"não faça ~, por favor (proibição educada)",ex:"ここに触[さわ]らないでください。",exPt:"Não toque aqui, por favor."},
+{j:"〜てもいいですか",pt:"posso fazer ~? (pedir permissão)",ex:"先[さき]に帰[かえ]ってもいいですか。",exPt:"Posso ir embora antes?"},
+{j:"〜てはいけません",pt:"não pode fazer ~ (proibição)",ex:"ここでタバコを吸[す]ってはいけません。",exPt:"Não pode fumar aqui."},
+{j:"〜なければなりません",pt:"tenho que fazer ~ (obrigação)",ex:"ヘルメットをかぶらなければなりません。",exPt:"Tem que usar capacete."},
+{j:"〜なくてもいいです",pt:"não precisa fazer ~",ex:"明日[あした]は来[こ]なくてもいいです。",exPt:"Amanhã não precisa vir."},
+{j:"〜たことがあります",pt:"já fiz ~ alguma vez (experiência)",ex:"この機械[きかい]を使[つか]ったことがあります。",exPt:"Já usei esta máquina."},
+{j:"〜ています",pt:"estou fazendo ~ / estado contínuo",ex:"今[いま]、配線[はいせん]を確認[かくにん]しています。",exPt:"Agora estou verificando a fiação."},
+{j:"〜ながら",pt:"fazer ~ enquanto faz outra coisa",ex:"音楽[おんがく]を聞[き]きながら電車[でんしゃ]で勉強[べんきょう]します。",exPt:"Estudo no trem enquanto ouço música."},
+{j:"〜と思[おも]います",pt:"acho que ~ (opinião)",ex:"明日[あした]終[お]わると思[おも]います。",exPt:"Acho que termina amanhã."},
+{j:"〜かもしれません",pt:"talvez ~ (possibilidade)",ex:"雨[あめ]が降[ふ]るかもしれません。",exPt:"Talvez chova."},
+{j:"〜ほうがいいです",pt:"é melhor fazer ~ (conselho)",ex:"早[はや]く寝[ね]たほうがいいですよ。",exPt:"É melhor dormir cedo, viu."},
+{j:"〜すぎます",pt:"~ demais (excesso)",ex:"この箱[はこ]は重[おも]すぎます。",exPt:"Esta caixa é pesada demais."},
+{j:"〜やすい／〜にくい",pt:"fácil de ~ / difícil de ~",ex:"この工具[こうぐ]は使[つか]いやすいです。",exPt:"Esta ferramenta é fácil de usar."},
+{j:"〜前[まえ]に",pt:"antes de ~",ex:"作業[さぎょう]の前[まえ]に電源[でんげん]を切[き]ります。",exPt:"Antes do trabalho, desligo a energia."},
+{j:"〜てから",pt:"depois de fazer ~",ex:"確認[かくにん]してから始[はじ]めてください。",exPt:"Comece só depois de verificar."},
+{j:"〜たら",pt:"se / quando ~ (condicional)",ex:"終[お]わったら、教[おし]えてください。",exPt:"Quando terminar, me avise."},
+{j:"〜とき",pt:"quando ~ (momento)",ex:"危[あぶ]ないとき、大[おお]きい声[こえ]で言[い]ってください。",exPt:"Quando for perigoso, fale em voz alta."},
+{j:"〜ので",pt:"porque ~ (razão, educado)",ex:"電車[でんしゃ]が遅[おく]れたので、遅刻[ちこく]しました。",exPt:"Cheguei atrasado porque o trem atrasou."},
+{j:"〜けど",pt:"mas ~ (contraste informal)",ex:"難[むずか]しいけど、頑張[がんば]ります。",exPt:"É difícil, mas vou me esforçar."},
+{j:"〜たいです",pt:"quero fazer ~",ex:"日本語[にほんご]が上手[じょうず]になりたいです。",exPt:"Quero ficar bom em japonês."},
+{j:"〜つもりです",pt:"pretendo fazer ~",ex:"資格[しかく]を取[と]るつもりです。",exPt:"Pretendo tirar a qualificação."},
+{j:"〜ことができます",pt:"consigo / posso fazer ~",ex:"図面[ずめん]を読[よ]むことができます。",exPt:"Consigo ler plantas."},
+{j:"〜になります",pt:"tornar-se ~ / virar ~",ex:"来年[らいねん]、二年目[にねんめ]になります。",exPt:"Ano que vem faço dois anos (de trabalho)."},
+{j:"〜てもらいます",pt:"alguém faz ~ para mim (receber favor)",ex:"先輩[せんぱい]に教[おし]えてもらいました。",exPt:"O veterano me ensinou."},
+{j:"〜てあげます",pt:"eu faço ~ para alguém",ex:"新人[しんじん]に道具[どうぐ]の名前[なまえ]を教[おし]えてあげます。",exPt:"Ensino os nomes das ferramentas ao novato."},
+{j:"〜てくれます",pt:"alguém faz ~ para mim (gratidão)",ex:"親方[おやかた]がいつも助[たす]けてくれます。",exPt:"O chefe sempre me ajuda."},
+{j:"〜ておきます",pt:"deixar feito ~ (preparação)",ex:"明日[あした]の資材[しざい]を準備[じゅんび]しておきます。",exPt:"Deixo preparados os materiais de amanhã."},
+{j:"〜てしまいました",pt:"acabei fazendo ~ (arrependimento/conclusão)",ex:"工具[こうぐ]を忘[わす]れてしまいました。",exPt:"Acabei esquecendo a ferramenta."},
+{j:"〜そうです（様子）",pt:"parece ~ (aparência)",ex:"この足場[あしば]は危[あぶ]なそうです。",exPt:"Este andaime parece perigoso."},
+{j:"〜でしょう",pt:"provavelmente ~",ex:"午後[ごご]は晴[は]れるでしょう。",exPt:"À tarde provavelmente vai fazer sol."},
+{j:"〜まだ／もう",pt:"ainda / já",ex:"まだ終[お]わっていません。もう少[すこ]しです。",exPt:"Ainda não terminei. Falta pouco."},
+{j:"〜より〜のほうが",pt:"~ é mais ... que ~ (comparação)",ex:"バスより電車[でんしゃ]のほうが速[はや]いです。",exPt:"O trem é mais rápido que o ônibus."},
+{j:"〜がほしいです",pt:"quero ~ (objeto)",ex:"新[あたら]しい安全靴[あんぜんぐつ]がほしいです。",exPt:"Quero botas de segurança novas."},
+{j:"〜に行[い]きます",pt:"ir para fazer ~ (propósito)",ex:"昼[ひる]ご飯[はん]を買[か]いに行[い]きます。",exPt:"Vou comprar o almoço."},
+{j:"〜方[かた]",pt:"modo de fazer ~",ex:"この機械[きかい]の使[つか]い方[かた]を教[おし]えてください。",exPt:"Me ensine como usar esta máquina."},
+{j:"〜れます（受身）",pt:"voz passiva",ex:"親方[おやかた]に呼[よ]ばれました。",exPt:"Fui chamado pelo chefe."},
+{j:"〜させてください",pt:"deixe-me fazer ~",ex:"私[わたし]にやらせてください。",exPt:"Deixe-me fazer isso."},
+{j:"〜ばれる敬語[けいご]：いらっしゃいます",pt:"keigo básico: estar/ir/vir (respeitoso)",ex:"社長[しゃちょう]はいらっしゃいますか。",exPt:"O diretor está?"},
+{j:"〜んですが…",pt:"é que ~ ... (introduzir assunto delicadamente)",ex:"ちょっと相談[そうだん]したいんですが…",exPt:"É que eu queria conversar uma coisa..."},
+] },
+];
+
+// ---------- ESTADO ----------
+const LS_KEY = "nihongoNow_v1";
+let state = load();
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(LS_KEY));
+    if(s && s.cards) return s;
+  }catch(e){}
+  return { cards:{}, settings:{ newPerDay:10, furi:true, autoAudio:true, ptVoice:true }, days:{}, streak:{last:null,count:0} };
+}
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function dayLog(){ const t=today(); if(!state.days[t]) state.days[t]={new:0,rev:0}; return state.days[t]; }
+function bumpStreak(){
+  const t=today(), st=state.streak;
+  if(st.last===t) return;
+  const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+  st.count = (st.last===y) ? st.count+1 : 1;
+  st.last = t;
+}
+
+// cada cartão: chave deckId:index → {iv: intervalo(dias), ease, due:"YYYY-MM-DD", reps, lapses, state:"new|learn|rev"}
+function cardKey(d,i){ return d+":"+i; }
+function getCS(key){
+  if(!state.cards[key]) state.cards[key] = { iv:0, ease:2.5, due:null, reps:0, lapses:0, st:"new" };
+  return state.cards[key];
+}
+
+// ---------- SRS (SM-2 simplificado) ----------
+function grade(cs, g){ // g: 1 errei, 2 difícil, 3 bom, 4 fácil
+  const t = today();
+  if(g===1){
+    cs.lapses++; cs.iv = 0; cs.st = "learn"; cs.due = t; // volta hoje
+    cs.ease = Math.max(1.3, cs.ease - 0.2);
+  } else {
+    if(cs.st==="new" || cs.st==="learn"){
+      cs.iv = (g===4) ? 3 : 1;
+      cs.st = "rev";
+    } else {
+      if(g===2){ cs.iv = Math.max(1, Math.round(cs.iv * 1.2)); cs.ease = Math.max(1.3, cs.ease - 0.15); }
+      if(g===3){ cs.iv = Math.max(1, Math.round(cs.iv * cs.ease)); }
+      if(g===4){ cs.iv = Math.max(1, Math.round(cs.iv * cs.ease * 1.3)); cs.ease += 0.15; }
+    }
+    const d = new Date(); d.setDate(d.getDate() + cs.iv);
+    cs.due = d.toISOString().slice(0,10);
+  }
+  cs.reps++;
+}
+function ivPreview(cs, g){
+  if(g===1) return "agora";
+  if(cs.st==="new"||cs.st==="learn") return (g===4)?"3 d":"1 d";
+  if(g===2) return Math.max(1,Math.round(cs.iv*1.2))+" d";
+  if(g===3) return Math.max(1,Math.round(cs.iv*cs.ease))+" d";
+  return Math.max(1,Math.round(cs.iv*cs.ease*1.3))+" d";
+}
+
+// ---------- FURIGANA ----------
+function rubyHTML(str){
+  return esc(str).replace(/([一-鿿㐀-䶿々〆ヶ]+)\[([^\]]+)\]/g,
+    "<ruby>$1<rt>$2</rt></ruby>");
+}
+function plainJP(str){ return str.replace(/\[[^\]]+\]/g,""); }
+function kanaOnly(str){
+  // devolve leitura em kana: troca 漢字[かな] por かな
+  return str.replace(/([一-鿿㐀-䶿々〆ヶ]+)\[([^\]]+)\]/g,"$2");
+}
+function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function applyFuri(){
+  document.body.classList.toggle("no-furi", !state.settings.furi);
+  document.getElementById("furiBtn").classList.toggle("active", state.settings.furi);
+}
+function toggleFuri(){ state.settings.furi = !state.settings.furi; save(); applyFuri(); }
+
+// ---------- ÁUDIO (TTS) ----------
+let voices = [];
+function loadVoices(){ voices = speechSynthesis.getVoices(); }
+loadVoices();
+if(typeof speechSynthesis!=="undefined") speechSynthesis.onvoiceschanged = loadVoices;
+function pickVoice(lang){
+  const pref = voices.filter(v=>v.lang && v.lang.replace("_","-").startsWith(lang));
+  if(!pref.length) return null;
+  // prioriza vozes aprimoradas
+  return pref.find(v=>/enhanced|premium|siri/i.test(v.name)) || pref[0];
+}
+let speakSeq = 0;
+function speak(text, lang, rate, onend){
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang;
+  const v = pickVoice(lang); if(v) u.voice = v;
+  u.rate = rate || (lang==="ja-JP" ? 0.9 : 1.0);
+  if(onend) u.onend = onend;
+  speechSynthesis.speak(u);
+  return u;
+}
+function stopSpeak(){ speechSynthesis.cancel(); }
+function speakJP(str, rate, onend){ return speak(plainJP(str), "ja-JP", rate, onend); }
+
+// ---------- NAVEGAÇÃO ----------
+const main = document.getElementById("main");
+let selectedDecks = DECKS.map(d=>d.id); // todos por padrão
+function showScreen(name, arg){
+  stopSpeak(); stopListen();
+  if(name==="home") renderHome();
+  if(name==="study") startStudy();
+  if(name==="listen") renderListen();
+  if(name==="shadow") renderShadow();
+  if(name==="browse") renderBrowse();
+  if(name==="practice") renderPractice();
+  if(name==="settings") renderSettings();
+}
+
+// ---------- HOME ----------
+function counts(){
+  const t = today();
+  let due=0, learned=0, totNew=0;
+  DECKS.forEach(d=>d.cards.forEach((c,i)=>{
+    const cs = state.cards[cardKey(d.id,i)];
+    if(!cs || cs.st==="new"){ totNew++; return; }
+    learned++;
+    if(cs.due && cs.due<=t) due++;
+  }));
+  return {due, learned, totNew};
+}
+function deckCounts(d){
+  const t=today(); let due=0, nw=0;
+  d.cards.forEach((c,i)=>{
+    const cs=state.cards[cardKey(d.id,i)];
+    if(!cs||cs.st==="new") nw++;
+    else if(cs.due && cs.due<=t) due++;
+  });
+  return {due,nw};
+}
+function renderHome(){
+  const c = counts();
+  const dl = dayLog();
+  const newLeft = Math.max(0, state.settings.newPerDay - dl.new);
+  main.innerHTML = `
+    <div class="stats">
+      <div class="stat due"><div class="num">${c.due}</div><div class="lbl">para revisar</div></div>
+      <div class="stat new"><div class="num">${newLeft}</div><div class="lbl">novos hoje</div></div>
+      <div class="stat streak"><div class="num">${state.streak.count||0}🔥</div><div class="lbl">dias seguidos</div></div>
+    </div>
+    <div class="deck-list">
+      ${DECKS.map(d=>{
+        const dc = deckCounts(d);
+        const sel = selectedDecks.includes(d.id);
+        return `<div class="deck ${sel?"selected":""}" onclick="toggleDeck('${d.id}')">
+          <div><div class="d-name">${sel?"✓ ":""}${d.name}</div><div class="d-sub">${d.sub}</div></div>
+          <div class="d-count"><b>${dc.due}</b> revisar<br>${dc.nw} novos</div>
+        </div>`;
+      }).join("")}
+    </div>
+    <div class="modes">
+      <button class="mode-btn m-study" onclick="showScreen('study')">📖 Estudar<small>flashcards SRS</small></button>
+      <button class="mode-btn m-listen" onclick="showScreen('listen')">🎧 Ouvir<small>modo trem / fones</small></button>
+      <button class="mode-btn m-shadow" onclick="showScreen('shadow')">🗣 Shadowing<small>ouvir e repetir</small></button>
+      <button class="mode-btn m-browse" onclick="showScreen('browse')">🔍 Navegar<small>todas as palavras</small></button>
+      <button class="mode-btn" style="grid-column:1/-1;background:linear-gradient(135deg,#e8b44a,#c99230)" onclick="showScreen('practice')">✏️ Praticar<small>quiz, montar frases, partículas, escuta</small></button>
+    </div>
+    <p class="tip">Toque nos decks para incluir/excluir das sessões.<br>Estude um pouco todo dia — a constância vale mais que a duração.</p>
+  `;
+}
+function toggleDeck(id){
+  if(selectedDecks.includes(id)){
+    if(selectedDecks.length>1) selectedDecks = selectedDecks.filter(x=>x!==id);
+  } else selectedDecks.push(id);
+  renderHome();
+}
+function activeDecks(){ return DECKS.filter(d=>selectedDecks.includes(d.id)); }
+
+// ---------- ESTUDAR (SRS) ----------
+let queue = [], qi = 0, revealed = false;
+function buildQueue(){
+  const t = today();
+  const dl = dayLog();
+  let newLeft = Math.max(0, state.settings.newPerDay - dl.new);
+  const due = [], news = [];
+  activeDecks().forEach(d=>d.cards.forEach((c,i)=>{
+    const key = cardKey(d.id,i);
+    const cs = state.cards[key];
+    if(!cs || cs.st==="new"){ news.push({deck:d,card:c,key,idx:i}); }
+    else if(cs.due && cs.due<=t){ due.push({deck:d,card:c,key,idx:i}); }
+  }));
+  // intercala: revisões primeiro, depois novos
+  queue = due.concat(news.slice(0, newLeft));
+}
+function startStudy(){
+  buildQueue(); qi = 0;
+  renderStudyCard();
+}
+function renderStudyCard(){
+  if(qi >= queue.length){
+    const dl = dayLog();
+    main.innerHTML = `
+      <div class="top-bar"><button class="back" onclick="showScreen('home')">‹ Início</button><span></span></div>
+      <div class="done-box">
+        <div class="big">🎉</div>
+        <h2>Tudo em dia!</h2>
+        <p>Hoje: ${dl.new} novos · ${dl.rev} revisões.<br>Volte amanhã — o SRS agenda cada cartão<br>no momento ideal para a memória.</p>
+        <button class="wide-btn" onclick="showScreen('listen')">🎧 Aproveitar para ouvir</button>
+        <button class="wide-btn" onclick="extraNew()">＋10 cartões novos extras</button>
+      </div>`;
+    return;
+  }
+  revealed = false;
+  const item = queue[qi];
+  const cs = getCS(item.key);
+  const isNew = cs.st==="new";
+  main.innerHTML = `
+    <div class="top-bar">
+      <button class="back" onclick="showScreen('home')">‹ Início</button>
+      <span class="progress-txt">${qi+1} / ${queue.length}</span>
+    </div>
+    <div class="card-box" id="cardBox" onclick="reveal()">
+      <span class="card-tag">${item.deck.name}</span>
+      ${isNew?'<span class="card-new-badge">NOVO</span>':""}
+      <div class="jp-main ${plainJP(item.card.j).length>10?"small":""}">${rubyHTML(item.card.j)}</div>
+      <div id="ansArea"><div class="reveal-hint">toque para ver a resposta</div></div>
+    </div>
+    <div id="gradeArea"></div>
+  `;
+  if(state.settings.autoAudio) setTimeout(()=>speakJP(item.card.j), 250);
+}
+function reveal(){
+  if(revealed) return;
+  revealed = true;
+  const item = queue[qi];
+  const cs = getCS(item.key);
+  const kana = kanaOnly(item.card.j);
+  const showReading = kana !== plainJP(item.card.j);
+  document.getElementById("ansArea").innerHTML = `
+    <div class="answer">
+      <div class="pt-mean">${esc(item.card.pt)}</div>
+      ${showReading?`<div class="reading">${esc(kana)}</div>`:""}
+      ${item.card.ex?`<div class="example">${rubyHTML(item.card.ex)}<div class="ex-pt">${esc(item.card.exPt||"")}</div></div>`:""}
+      <button class="audio-btn" onclick="event.stopPropagation();replayAudio()">🔊 ouvir</button>
+    </div>`;
+  document.getElementById("gradeArea").innerHTML = `
+    <div class="grade-row">
+      <button class="grade-btn g-fail" onclick="doGrade(1)">Errei<small>${ivPreview(cs,1)}</small></button>
+      <button class="grade-btn g-hard" onclick="doGrade(2)">Difícil<small>${ivPreview(cs,2)}</small></button>
+      <button class="grade-btn g-good" onclick="doGrade(3)">Bom<small>${ivPreview(cs,3)}</small></button>
+      <button class="grade-btn g-easy" onclick="doGrade(4)">Fácil<small>${ivPreview(cs,4)}</small></button>
+    </div>`;
+  if(state.settings.autoAudio && item.card.ex) setTimeout(()=>speakJP(item.card.ex, 0.85), 200);
+}
+function replayAudio(){
+  const item = queue[qi];
+  stopSpeak();
+  speakJP(item.card.j, 0.9, ()=>{ if(item.card.ex) speakJP(item.card.ex, 0.85); });
+}
+function doGrade(g){
+  const item = queue[qi];
+  const cs = getCS(item.key);
+  const wasNew = cs.st==="new";
+  grade(cs, g);
+  const dl = dayLog();
+  if(wasNew) dl.new++; else dl.rev++;
+  bumpStreak();
+  if(g===1){ queue.push(item); } // errou → volta no fim da fila
+  save();
+  qi++;
+  renderStudyCard();
+}
+function extraNew(){
+  const news = [];
+  activeDecks().forEach(d=>d.cards.forEach((c,i)=>{
+    const key = cardKey(d.id,i);
+    const cs = state.cards[key];
+    if(!cs || cs.st==="new") news.push({deck:d,card:c,key,idx:i});
+  }));
+  if(!news.length){ toast("Você já viu todos os cartões! 🎉"); return; }
+  state.settings.newPerDay += 10; save();
+  queue = news.slice(0,10); qi = 0;
+  renderStudyCard();
+}
+
+// ---------- OUVIR (modo trem) ----------
+let listenTimer = null, listenIdx = 0, listenPlaying = false, listenCards = [];
+let listenOpts = { pt:true, repeat:false, rate:0.9 };
+function stopListen(){ listenPlaying=false; if(listenTimer){clearTimeout(listenTimer);listenTimer=null;} stopSpeak(); }
+function buildListenCards(){
+  listenCards = [];
+  activeDecks().forEach(d=>d.cards.forEach((c,i)=>{
+    const cs = state.cards[cardKey(d.id,i)];
+    listenCards.push({deck:d, card:c, seen: cs && cs.st!=="new"});
+  }));
+  // já estudados primeiro (revisão auditiva), depois embaralha levemente
+  listenCards.sort((a,b)=> (b.seen?1:0)-(a.seen?1:0) || Math.random()-0.5);
+}
+function renderListen(){
+  buildListenCards(); listenIdx = 0; listenPlaying = false;
+  main.innerHTML = `
+    <div class="top-bar">
+      <button class="back" onclick="showScreen('home')">‹ Início</button>
+      <span class="progress-txt" id="lProg"></span>
+    </div>
+    <div class="listen-card" id="lCard">
+      <div class="jp-main small" id="lJP" style="line-height:2"></div>
+      <div class="reading" id="lPT" style="margin-top:12px;font-size:15px"></div>
+    </div>
+    <div class="listen-controls">
+      <button class="ctrl-btn" onclick="listenPrev()">⏮</button>
+      <button class="ctrl-btn play" id="lPlay" onclick="listenToggle()">▶︎</button>
+      <button class="ctrl-btn" onclick="listenNext(true)">⏭</button>
+    </div>
+    <div class="listen-opts">
+      <button class="chip ${listenOpts.pt?"on":""}" onclick="lopt('pt')">tradução em áudio</button>
+      <button class="chip ${listenOpts.repeat?"on":""}" onclick="lopt('repeat')">repetir 2×</button>
+      <button class="chip ${listenOpts.rate===0.75?"on":""}" onclick="lopt('slow')">devagar</button>
+    </div>
+    <p class="tip">Modo para o trem: aperte play e só escuta.<br>⚠️ Mantenha a tela ligada — o iPhone pausa a voz com a tela bloqueada.<br>Dica: abaixe o brilho e deixe o app aberto.</p>
+  `;
+  showListenCard(false);
+}
+function lopt(k){
+  if(k==="pt") listenOpts.pt=!listenOpts.pt;
+  if(k==="repeat") listenOpts.repeat=!listenOpts.repeat;
+  if(k==="slow") listenOpts.rate = listenOpts.rate===0.75?0.9:0.75;
+  const wasPlaying = listenPlaying;
+  stopListen();
+  renderListenChips();
+  if(wasPlaying) listenToggle();
+}
+function renderListenChips(){
+  const chips = document.querySelectorAll(".listen-opts .chip");
+  if(chips.length<3) return;
+  chips[0].classList.toggle("on", listenOpts.pt);
+  chips[1].classList.toggle("on", listenOpts.repeat);
+  chips[2].classList.toggle("on", listenOpts.rate===0.75);
+}
+function showListenCard(autoplay){
+  if(!listenCards.length) return;
+  const it = listenCards[listenIdx];
+  const el = document.getElementById("lJP");
+  if(!el) return;
+  el.innerHTML = rubyHTML(it.card.j) + (it.card.ex ? `<div style="font-size:19px;margin-top:10px;color:var(--muted)">${rubyHTML(it.card.ex)}</div>` : "");
+  document.getElementById("lPT").textContent = it.card.pt + (it.card.exPt ? " — " + it.card.exPt : "");
+  document.getElementById("lProg").textContent = (listenIdx+1) + " / " + listenCards.length;
+  if(autoplay) playListenItem();
+}
+function playListenItem(){
+  if(!listenPlaying) return;
+  const it = listenCards[listenIdx];
+  const jpText = plainJP(it.card.j) + (it.card.ex ? "。" + plainJP(it.card.ex) : "");
+  const sayPT = ()=>{
+    if(!listenPlaying) return;
+    if(listenOpts.pt){
+      speak(it.card.pt, "pt-BR", 1.05, ()=>{ listenTimer = setTimeout(()=>listenNext(false), 900); });
+    } else {
+      listenTimer = setTimeout(()=>listenNext(false), 1200);
+    }
+  };
+  speak(jpText, "ja-JP", listenOpts.rate, ()=>{
+    if(!listenPlaying) return;
+    if(listenOpts.repeat){
+      listenTimer = setTimeout(()=>{ if(listenPlaying) speak(jpText,"ja-JP",listenOpts.rate, sayPT); }, 500);
+    } else sayPT();
+  });
+}
+function listenToggle(){
+  const btn = document.getElementById("lPlay");
+  if(listenPlaying){ stopListen(); btn.textContent="▶︎"; }
+  else { listenPlaying = true; btn.textContent="⏸"; playListenItem(); }
+}
+function listenNext(manual){
+  if(manual){ stopSpeak(); if(listenTimer)clearTimeout(listenTimer); }
+  listenIdx = (listenIdx+1) % listenCards.length;
+  showListenCard(listenPlaying);
+}
+function listenPrev(){
+  stopSpeak(); if(listenTimer)clearTimeout(listenTimer);
+  listenIdx = (listenIdx-1+listenCards.length) % listenCards.length;
+  showListenCard(listenPlaying);
+}
+
+// ---------- SHADOWING ----------
+let shCards = [], shIdx = 0;
+function renderShadow(){
+  shCards = [];
+  activeDecks().forEach(d=>d.cards.forEach(c=>{ if(c.ex) shCards.push(c); }));
+  shCards.sort(()=>Math.random()-0.5);
+  shIdx = 0;
+  renderShadowCard();
+}
+function renderShadowCard(){
+  if(!shCards.length){ main.innerHTML = `<div class="top-bar"><button class="back" onclick="showScreen('home')">‹ Início</button></div><p class="tip">Sem frases nos decks selecionados.</p>`; return; }
+  const c = shCards[shIdx];
+  main.innerHTML = `
+    <div class="top-bar">
+      <button class="back" onclick="showScreen('home')">‹ Início</button>
+      <span class="progress-txt">${shIdx+1} / ${shCards.length}</span>
+    </div>
+    <div class="card-box" style="cursor:default">
+      <div class="jp-main small" style="line-height:2.1">${rubyHTML(c.ex)}</div>
+      <div class="reading" style="margin-top:14px">${esc(c.exPt||c.pt)}</div>
+      <button class="audio-btn" onclick="shPlay(0.9)">🔊 velocidade normal</button>
+      <button class="audio-btn" onclick="shPlay(0.65)">🐢 devagar</button>
+    </div>
+    <div class="grade-row" style="grid-template-columns:1fr 1fr">
+      <button class="grade-btn g-hard" onclick="shPrev()">‹ Anterior</button>
+      <button class="grade-btn g-good" onclick="shNext()">Próxima ›</button>
+    </div>
+    <p class="tip">1. Ouça a frase &nbsp;2. Repita em voz alta imitando o ritmo<br>3. Ouça de novo e compare. Repita 2–3× antes de avançar.</p>
+  `;
+  setTimeout(()=>shPlay(0.9), 300);
+}
+function shPlay(rate){ stopSpeak(); speakJP(shCards[shIdx].ex, rate); }
+function shNext(){ stopSpeak(); shIdx=(shIdx+1)%shCards.length; renderShadowCard(); }
+function shPrev(){ stopSpeak(); shIdx=(shIdx-1+shCards.length)%shCards.length; renderShadowCard(); }
+
+// ---------- PRATICAR ----------
+const PR_LEN = 10;
+const PARTICLES = ["から","まで","を","が","は","に","で","と"];
+let prQs = [], prIdx = 0, prScore = 0, prLocked = false, prBuild = null, prCurType = "mix";
+
+function prPool(){
+  const pool = [];
+  activeDecks().forEach(d=>d.cards.forEach(c=>pool.push(c)));
+  return pool;
+}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function pick(arr,n,not){
+  const c = arr.filter(x=>x!==not); shuffle(c); return c.slice(0,n);
+}
+// acha uma partícula fora dos colchetes, logo após ] ou katakana
+function findParticle(ex){
+  let inB=false;
+  for(let i=1;i<ex.length;i++){
+    const ch=ex[i];
+    if(ch==="["){inB=true;continue}
+    if(ch==="]"){inB=false;continue}
+    if(inB) continue;
+    const prev=ex[i-1];
+    if(!(prev==="]"||/[ァ-ヶー]/.test(prev))) continue;
+    for(const p of PARTICLES){ if(ex.startsWith(p,i)) return {i,p}; }
+  }
+  return null;
+}
+// divide frase em pedaços: grupo kanji[furi]/katakana + hiragana seguinte
+function chunkEx(ex){
+  const toks = ex.match(/[一-鿿々〆ヶ]+\[[^\]]+\]|[ぁ-ん]+|[ァ-ヶー]+|[A-Za-z0-9０-９]+|[。、！？「」〜・]+/g)||[];
+  const chunks=[];
+  toks.forEach(t=>{
+    const glue=/^[ぁ-ん]+$/.test(t)||/^[。、！？「」〜・]+$/.test(t);
+    if(glue && chunks.length) chunks[chunks.length-1]+=t;
+    else chunks.push(t);
+  });
+  return chunks;
+}
+function genQ(type, pool){
+  const exPool = pool.filter(c=>c.ex);
+  if(type==="mc_jp"){
+    const c = pool[Math.floor(Math.random()*pool.length)];
+    return {type, card:c, opts: shuffle([c.pt, ...pick(pool.map(x=>x.pt),3,c.pt)]), ans:c.pt};
+  }
+  if(type==="mc_pt"){
+    const c = pool[Math.floor(Math.random()*pool.length)];
+    return {type, card:c, opts: shuffle([c.j, ...pick(pool.map(x=>x.j),3,c.j)]), ans:c.j};
+  }
+  if(type==="listen"){
+    const c = exPool.length?exPool[Math.floor(Math.random()*exPool.length)]:pool[Math.floor(Math.random()*pool.length)];
+    return {type, card:c, opts: shuffle([c.pt, ...pick(pool.map(x=>x.pt),3,c.pt)]), ans:c.pt};
+  }
+  if(type==="particle"){
+    for(let t=0;t<60;t++){
+      const c = exPool[Math.floor(Math.random()*exPool.length)];
+      const f = c && findParticle(c.ex);
+      if(f){
+        const opts = shuffle([f.p, ...pick(PARTICLES,3,f.p)]);
+        return {type, card:c, blank: c.ex.slice(0,f.i)+"〔　？　〕"+c.ex.slice(f.i+f.p.length), opts, ans:f.p};
+      }
+    }
+    return genQ("mc_jp", pool);
+  }
+  if(type==="build"){
+    for(let t=0;t<60;t++){
+      const c = exPool[Math.floor(Math.random()*exPool.length)];
+      const chunks = c && chunkEx(c.ex);
+      if(chunks && chunks.length>=3 && chunks.length<=8){
+        let bank = shuffle(chunks.slice());
+        if(bank.join("")===chunks.join("")) bank = shuffle(bank);
+        return {type, card:c, chunks, bank};
+      }
+    }
+    return genQ("mc_jp", pool);
+  }
+}
+const PR_TYPES = [
+  ["mc_jp","🇯🇵→🇧🇷 Significado","Vê o japonês, escolhe a tradução"],
+  ["mc_pt","🇧🇷→🇯🇵 Palavra","Vê o português, escolhe o japonês"],
+  ["listen","🎧 Escuta","Só áudio: entenda sem ler"],
+  ["particle","⭕ Partículas","Complete は・を・に・で…"],
+  ["build","🧩 Montar frase","Ordene os pedaços da frase"],
+  ["mix","🎲 Misto","Todos os tipos misturados"],
+];
+function renderPractice(){
+  main.innerHTML = `
+    <div class="top-bar"><button class="back" onclick="showScreen('home')">‹ Início</button><span></span></div>
+    <p style="font-weight:700;font-size:17px;margin:4px 4px 2px">Escolha o exercício</p>
+    <p style="color:var(--muted);font-size:13px;margin:0 4px">${PR_LEN} questões por rodada, com os decks selecionados</p>
+    <div class="pr-type">
+      ${PR_TYPES.map(t=>`<button class="mode-btn" style="background:var(--card);border:1px solid #2c3245" onclick="startPractice('${t[0]}')">${t[1]}<small>${t[2]}</small></button>`).join("")}
+    </div>`;
+}
+function startPractice(type){
+  prCurType = type;
+  const pool = prPool();
+  const kinds = ["mc_jp","mc_pt","listen","particle","build"];
+  prQs = [];
+  for(let i=0;i<PR_LEN;i++){
+    const k = type==="mix" ? kinds[Math.floor(Math.random()*kinds.length)] : type;
+    prQs.push(genQ(k, pool));
+  }
+  prIdx = 0; prScore = 0;
+  renderPrQ();
+}
+function renderPrQ(){
+  stopSpeak();
+  if(prIdx>=prQs.length){
+    const pct = Math.round(prScore/prQs.length*100);
+    main.innerHTML = `
+      <div class="top-bar"><button class="back" onclick="showScreen('home')">‹ Início</button><span></span></div>
+      <div class="done-box">
+        <div class="big">${pct>=80?"🏆":pct>=50?"💪":"📚"}</div>
+        <h2>${prScore} / ${prQs.length}</h2>
+        <p>${pct>=80?"Excelente! すごい！":pct>=50?"Bom trabalho! Continue praticando.":"Sem problema — errar faz parte. Revise e tente de novo!"}</p>
+        <button class="wide-btn" onclick="startPractice(prCurType)">🔁 Mais uma rodada</button>
+        <button class="wide-btn" onclick="renderPractice()">Outro exercício</button>
+      </div>`;
+    return;
+  }
+  prLocked = false;
+  const q = prQs[prIdx];
+  const head = `
+    <div class="top-bar">
+      <button class="back" onclick="showScreen('home')">‹ Sair</button>
+      <span class="progress-txt">${prIdx+1} / ${prQs.length} · ✓ ${prScore}</span>
+    </div>`;
+  if(q.type==="mc_jp"){
+    main.innerHTML = head + `
+      <div class="card-box" style="cursor:default;min-height:140px;flex:0 0 auto">
+        <div class="jp-main ${plainJP(q.card.j).length>10?"small":""}">${rubyHTML(q.card.j)}</div>
+        <button class="audio-btn" onclick="speakJP(prQs[prIdx].card.j,0.9)">🔊</button>
+      </div>
+      <p class="tip" style="margin:8px 0 0">O que significa?</p>
+      <div id="optArea">${q.opts.map((o,i)=>`<button class="opt-btn" data-i="${i}" onclick="prAnswer(this,${i})">${esc(o)}</button>`).join("")}</div>
+      <div class="pr-feedback" id="prFb"></div>`;
+    if(state.settings.autoAudio) setTimeout(()=>speakJP(q.card.j),250);
+  }
+  if(q.type==="mc_pt"){
+    main.innerHTML = head + `
+      <div class="card-box" style="cursor:default;min-height:120px;flex:0 0 auto">
+        <div class="pt-mean" style="font-size:22px">${esc(q.card.pt)}</div>
+      </div>
+      <p class="tip" style="margin:8px 0 0">Como se diz em japonês?</p>
+      <div id="optArea">${q.opts.map((o,i)=>`<button class="opt-btn" data-i="${i}" onclick="prAnswer(this,${i})">${rubyHTML(o)}</button>`).join("")}</div>
+      <div class="pr-feedback" id="prFb"></div>`;
+  }
+  if(q.type==="listen"){
+    const txt = q.card.ex || q.card.j;
+    main.innerHTML = head + `
+      <div class="card-box" style="cursor:default;min-height:140px;flex:0 0 auto">
+        <div style="font-size:46px">🎧</div>
+        <button class="audio-btn" onclick='speakJP(${JSON.stringify(txt)},0.85)'>🔊 ouvir de novo</button>
+        <button class="audio-btn" onclick='speakJP(${JSON.stringify(txt)},0.65)'>🐢 devagar</button>
+      </div>
+      <p class="tip" style="margin:8px 0 0">O que você ouviu?</p>
+      <div id="optArea">${q.opts.map((o,i)=>`<button class="opt-btn" data-i="${i}" onclick="prAnswer(this,${i})">${esc(o)}</button>`).join("")}</div>
+      <div class="pr-feedback" id="prFb"></div>`;
+    setTimeout(()=>speakJP(txt,0.85),300);
+  }
+  if(q.type==="particle"){
+    main.innerHTML = head + `
+      <div class="card-box" style="cursor:default;min-height:150px;flex:0 0 auto">
+        <div class="jp-main small" style="line-height:2.1">${rubyHTML(q.blank)}</div>
+        <div class="reading" style="margin-top:10px">${esc(q.card.exPt||"")}</div>
+      </div>
+      <p class="tip" style="margin:8px 0 0">Qual partícula completa a frase?</p>
+      <div id="optArea" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+        ${q.opts.map((o,i)=>`<button class="opt-btn" data-i="${i}" style="margin-top:0;font-size:22px" onclick="prAnswer(this,${i})">${esc(o)}</button>`).join("")}
+      </div>
+      <div class="pr-feedback" id="prFb"></div>`;
+  }
+  if(q.type==="build"){
+    prBuild = { placed:[], bank:q.bank.map((c,i)=>({txt:c,used:false,id:i})) };
+    main.innerHTML = head + `
+      <p class="tip" style="margin:4px 0 0">Monte a frase: <b>${esc(q.card.exPt||q.card.pt)}</b></p>
+      <div class="chunk-area" id="chunkArea"></div>
+      <div class="chunk-bank" id="chunkBank"></div>
+      <button class="wide-btn" id="checkBtn" onclick="prCheckBuild()" style="background:var(--accent);color:#fff;border:none">Verificar</button>
+      <div class="pr-feedback" id="prFb"></div>`;
+    renderBuild();
+  }
+}
+function renderBuild(){
+  const q = prQs[prIdx];
+  document.getElementById("chunkArea").innerHTML =
+    prBuild.placed.map((id,pos)=>`<span class="chunk placed" onclick="prUnplace(${pos})">${rubyHTML(prBuild.bank[id].txt)}</span>`).join("") ||
+    `<span style="color:var(--muted);font-size:13px">toque nos pedaços abaixo, na ordem</span>`;
+  document.getElementById("chunkBank").innerHTML =
+    prBuild.bank.map((b,i)=>b.used?"":`<span class="chunk" onclick="prPlace(${i})">${rubyHTML(b.txt)}</span>`).join("");
+}
+function prPlace(i){ if(prLocked||prBuild.bank[i].used) return; prBuild.bank[i].used=true; prBuild.placed.push(i); renderBuild(); }
+function prUnplace(pos){ if(prLocked) return; const id=prBuild.placed.splice(pos,1)[0]; prBuild.bank[id].used=false; renderBuild(); }
+function prCheckBuild(){
+  if(prLocked) return;
+  const q = prQs[prIdx];
+  const built = prBuild.placed.map(id=>prBuild.bank[id].txt).join("");
+  const ok = built === q.chunks.join("");
+  prLocked = true;
+  const fb = document.getElementById("prFb");
+  fb.className = "pr-feedback " + (ok?"ok":"no");
+  fb.innerHTML = (ok?"⭕ Correto! ":"❌ Quase! Resposta: ") + `<span style="font-size:17px">${rubyHTML(q.card.ex)}</span>`;
+  if(ok) prScore++;
+  speakJP(q.card.ex, 0.85);
+  setTimeout(()=>{prIdx++;renderPrQ();}, ok?1800:3200);
+}
+function prAnswer(btn, idx){
+  if(prLocked) return;
+  prLocked = true;
+  const q = prQs[prIdx];
+  const chosen = q.opts[idx];
+  const ok = chosen === q.ans;
+  const ansIdx = q.opts.indexOf(q.ans);
+  document.querySelectorAll(".opt-btn").forEach(b=>{
+    b.disabled = true;
+    if(parseInt(b.getAttribute("data-i"))===ansIdx) b.classList.add("correct");
+  });
+  if(!ok) btn.classList.add("wrong");
+  const fb = document.getElementById("prFb");
+  fb.className = "pr-feedback " + (ok?"ok":"no");
+  fb.textContent = ok ? "⭕ 正解！ Correto!" : "❌ Resposta certa: " + plainJP(q.ans);
+  if(ok) prScore++;
+  if(q.type!=="listen") speakJP(q.card.j, 0.9);
+  setTimeout(()=>{prIdx++;renderPrQ();}, ok?1200:2600);
+}
+
+// ---------- NAVEGAR ----------
+function renderBrowse(){
+  main.innerHTML = `
+    <div class="top-bar"><button class="back" onclick="showScreen('home')">‹ Início</button><span></span></div>
+    <input class="search" id="searchBox" placeholder="Buscar (japonês ou português)…" oninput="renderBrowseList()">
+    <div id="browseList"></div>
+  `;
+  renderBrowseList();
+}
+function renderBrowseList(){
+  const q = (document.getElementById("searchBox").value||"").toLowerCase();
+  let html = "";
+  activeDecks().forEach(d=>{
+    const items = d.cards.map((c,i)=>({c,i})).filter(({c})=>{
+      if(!q) return true;
+      return plainJP(c.j).includes(q) || kanaOnly(c.j).includes(q) ||
+             c.pt.toLowerCase().includes(q) || (c.ex && plainJP(c.ex).includes(q));
+    });
+    if(!items.length) return;
+    html += `<p style="color:var(--muted);font-size:12px;font-weight:700;margin:14px 4px 8px">${d.name} (${items.length})</p>`;
+    items.forEach(({c,i})=>{
+      const cs = state.cards[cardKey(d.id,i)];
+      const learned = cs && cs.st!=="new";
+      html += `<div class="browse-item">
+        <div><div class="b-jp">${learned?"":"<span style='color:var(--accent2)'>● </span>"}${rubyHTML(c.j)}</div>
+        <div class="b-pt">${esc(c.pt)}</div></div>
+        <button class="b-play" onclick='speakJP(${JSON.stringify(c.j)},0.9)'>🔊</button>
+      </div>`;
+    });
+  });
+  document.getElementById("browseList").innerHTML = html || "<p class='tip'>Nada encontrado.</p>";
+}
+
+// ---------- CONFIGURAÇÕES ----------
+function renderSettings(){
+  const s = state.settings;
+  const c = counts();
+  main.innerHTML = `
+    <div class="top-bar"><button class="back" onclick="showScreen('home')">‹ Início</button><span></span></div>
+    <div class="set-row">
+      <div><div class="s-lbl">Furigana</div><div class="s-sub">Mostrar leitura em cima dos kanjis</div></div>
+      <label class="switch"><input type="checkbox" ${s.furi?"checked":""} onchange="toggleFuri()"><span class="slider-sw"></span></label>
+    </div>
+    <div class="set-row">
+      <div><div class="s-lbl">Áudio automático</div><div class="s-sub">Ler o cartão ao aparecer</div></div>
+      <label class="switch"><input type="checkbox" ${s.autoAudio?"checked":""} onchange="state.settings.autoAudio=this.checked;save()"><span class="slider-sw"></span></label>
+    </div>
+    <div class="set-row">
+      <div><div class="s-lbl">Novos por dia</div><div class="s-sub">10 = ~15-20 min/dia com revisões</div></div>
+      <input type="number" min="1" max="50" value="${s.newPerDay}" style="width:70px;text-align:center"
+        onchange="state.settings.newPerDay=Math.max(1,parseInt(this.value)||10);save()">
+    </div>
+    <div class="set-row">
+      <div><div class="s-lbl">Progresso</div><div class="s-sub">${c.learned} aprendidos · ${c.totNew} restantes · sequência ${state.streak.count||0} dias</div></div>
+    </div>
+    <button class="wide-btn" onclick="exportProgress()">📤 Copiar backup do progresso</button>
+    <button class="wide-btn" onclick="importProgress()">📥 Restaurar backup</button>
+    <button class="wide-btn" style="color:var(--danger)" onclick="if(confirm('Apagar todo o progresso?')){localStorage.removeItem(LS_KEY);state=load();save();toast('Progresso apagado');renderSettings();}">🗑 Zerar progresso</button>
+    <p class="tip">Feito para iPhone: no Safari toque em <b>Compartilhar → Adicionar à Tela de Início</b><br>para usar como app, em tela cheia e offline.</p>
+  `;
+}
+function exportProgress(){
+  const data = JSON.stringify(state);
+  if(navigator.clipboard){ navigator.clipboard.writeText(data).then(()=>toast("Backup copiado! Cole em uma nota.")); }
+  else prompt("Copie este texto:", data);
+}
+function importProgress(){
+  const data = prompt("Cole aqui o backup:");
+  if(!data) return;
+  try{ const s = JSON.parse(data); if(s.cards){ state = s; save(); applyFuri(); toast("Backup restaurado ✓"); renderSettings(); } }
+  catch(e){ toast("Backup inválido"); }
+}
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2200);
+}
+
+// ---------- INIT ----------
+applyFuri();
+renderHome();
+// desbloqueia TTS no primeiro toque (exigência do iOS)
+document.body.addEventListener("touchstart", function unlock(){
+  const u = new SpeechSynthesisUtterance(""); speechSynthesis.speak(u);
+  document.body.removeEventListener("touchstart", unlock);
+}, {once:true});
+</script>
+</body>
+</html>
